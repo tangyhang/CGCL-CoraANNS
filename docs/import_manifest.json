@@ -1,0 +1,2539 @@
+{
+  "source_repository": "CPU-GPU-IVF-RabitQ (local RaBitQ-Library working tree)",
+  "source_head": "14d844154606a901c0c6b58940fcffe2fb32a09f",
+  "note": "Imported working-tree bytes, including any uncommitted changes; HEAD alone does not identify the snapshot. Changes are include paths, one Python import and test path, and the documented production C++ split. Production files have formatting and comment cleanup; all 27 first-party computational C++/CUDA files are audited against the source token sequences, allowing only recorded includes and the split-file prefix.",
+  "include_replacements": {
+    "rabitqlib/index/ivf_rabitq_querying_gpu_cpu.cuh": "coraanns/search/hybrid.cuh",
+    "rabitqlib/index/ivf_rabitq_querying_gpu.cuh": "coraanns/baselines/gpu.cuh",
+    "rabitqlib/index/ivf_rabitq_querying_cpu_gpu.cuh": "coraanns/experimental/cpu_gpu.cuh",
+    "rabitqlib/index/ivf_rabitq_querying_gpu_global.cuh": "coraanns/experimental/gpu_global.cuh",
+    "rabitqlib/index/ivf_rabitq_querying_gpu_cpu_asymmetric.cuh": "coraanns/experimental/asymmetric.cuh",
+    "rabitqlib/index/ivf_rabitq_querying_gpu_cpu_trace_progress.cuh": "coraanns/experimental/backlog_trace.cuh",
+    "\"ivf_rabitq_benchmark_common.hpp\"": "\"coraanns/benchmark/options.hpp\"",
+    "\"ivf_rabitq_experiment_options.hpp\"": "\"coraanns/benchmark/mechanism_options.hpp\"",
+    "\"recall_evaluator.hpp\"": "\"coraanns/benchmark/recall.hpp\"",
+    "\"graph_baseline_common.hpp\"": "\"coraanns/benchmark/distance.hpp\""
+  },
+  "files": [
+    {
+      "source": "include/rabitqlib/defines.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/defines.hpp",
+      "source_sha256": "5c44bb20b04da438ad7650c45ab7bb30bd0dddef8c5bb01d394a578f3c075d9e",
+      "imported_sha256": "5c44bb20b04da438ad7650c45ab7bb30bd0dddef8c5bb01d394a578f3c075d9e"
+    },
+    {
+      "source": "include/rabitqlib/fastscan/fastscan.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/fastscan/fastscan.hpp",
+      "source_sha256": "dd74e150b1d25b3454cf0dfb52807feb6b67feac7fd817fc3ae05e9b5c7a77fe",
+      "imported_sha256": "dd74e150b1d25b3454cf0dfb52807feb6b67feac7fd817fc3ae05e9b5c7a77fe"
+    },
+    {
+      "source": "include/rabitqlib/fastscan/highacc_fastscan.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/fastscan/highacc_fastscan.hpp",
+      "source_sha256": "bb3a989f35bed8bc92543be6c929b938456c831b7ebed422ca4960ce3e9662ee",
+      "imported_sha256": "bb3a989f35bed8bc92543be6c929b938456c831b7ebed422ca4960ce3e9662ee"
+    },
+    {
+      "source": "include/rabitqlib/index/estimator.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/estimator.hpp",
+      "source_sha256": "e50a493d2b76835d7dbd8c72e9bd32ce31a9bbe1121d778e8f68fdc40fd64f38",
+      "imported_sha256": "e50a493d2b76835d7dbd8c72e9bd32ce31a9bbe1121d778e8f68fdc40fd64f38"
+    },
+    {
+      "source": "include/rabitqlib/index/hnsw/hnsw.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/hnsw/hnsw.hpp",
+      "source_sha256": "30816ecb4d6f2a8b8c4538f7042dec3eace46753fe88c6ca3f75f42e4e12ac24",
+      "imported_sha256": "30816ecb4d6f2a8b8c4538f7042dec3eace46753fe88c6ca3f75f42e4e12ac24"
+    },
+    {
+      "source": "include/rabitqlib/index/ivf/cluster.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/ivf/cluster.hpp",
+      "source_sha256": "ac699181236119023b7b4691e4b4599ebf8c595c9181558042f48dfb0a3af3a9",
+      "imported_sha256": "ac699181236119023b7b4691e4b4599ebf8c595c9181558042f48dfb0a3af3a9"
+    },
+    {
+      "source": "include/rabitqlib/index/ivf/initializer.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/ivf/initializer.hpp",
+      "source_sha256": "e84fe97ad7e319025082abfec5fc3cbec77499813269a0c8155c85a9b940d7c7",
+      "imported_sha256": "e84fe97ad7e319025082abfec5fc3cbec77499813269a0c8155c85a9b940d7c7"
+    },
+    {
+      "source": "include/rabitqlib/index/ivf/ivf.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/ivf/ivf.hpp",
+      "source_sha256": "bcb700d983009b7fbf37f879de7e9c1fa3d46b82e2ebc6ea722bf0fdb7303b07",
+      "imported_sha256": "bcb700d983009b7fbf37f879de7e9c1fa3d46b82e2ebc6ea722bf0fdb7303b07"
+    },
+    {
+      "source": "include/rabitqlib/index/lut.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/lut.hpp",
+      "source_sha256": "15afadf56a342ca17cdd9cbd12721ba17281b77b8a94ca39798ea55fc9af5f53",
+      "imported_sha256": "15afadf56a342ca17cdd9cbd12721ba17281b77b8a94ca39798ea55fc9af5f53"
+    },
+    {
+      "source": "include/rabitqlib/index/query.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/query.hpp",
+      "source_sha256": "f18414450469f1a75414027a90fce3d82ea1820345a84a306d63db50be9821e5",
+      "imported_sha256": "f18414450469f1a75414027a90fce3d82ea1820345a84a306d63db50be9821e5"
+    },
+    {
+      "source": "include/rabitqlib/index/symqg/qg.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/symqg/qg.hpp",
+      "source_sha256": "f6590f018e7ec617d418f15e97bf7d238990063afe37178141b66ae61a2a6d68",
+      "imported_sha256": "f6590f018e7ec617d418f15e97bf7d238990063afe37178141b66ae61a2a6d68"
+    },
+    {
+      "source": "include/rabitqlib/index/symqg/qg_builder.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/index/symqg/qg_builder.hpp",
+      "source_sha256": "e74e1289255ed466315ffac610dd567b79e4030cfb2bc8447b6939fdee267a10",
+      "imported_sha256": "e74e1289255ed466315ffac610dd567b79e4030cfb2bc8447b6939fdee267a10"
+    },
+    {
+      "source": "include/rabitqlib/quantization/data_layout.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/quantization/data_layout.hpp",
+      "source_sha256": "c0595e97d3bdd053dceeaff47e82f1b515b00318c8dbdb1d7e4455ad3fe709de",
+      "imported_sha256": "c0595e97d3bdd053dceeaff47e82f1b515b00318c8dbdb1d7e4455ad3fe709de"
+    },
+    {
+      "source": "include/rabitqlib/quantization/pack_excode.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/quantization/pack_excode.hpp",
+      "source_sha256": "8125b3b1fdd138d566b819d393e374f5b2aafdcced4bad82e0bc44285f2123b5",
+      "imported_sha256": "8125b3b1fdd138d566b819d393e374f5b2aafdcced4bad82e0bc44285f2123b5"
+    },
+    {
+      "source": "include/rabitqlib/quantization/rabitq.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/quantization/rabitq.hpp",
+      "source_sha256": "26d22b503189e3e4527dbaa85e9ef6e47f2615d6e7138d0d7d63a597a1aba598",
+      "imported_sha256": "26d22b503189e3e4527dbaa85e9ef6e47f2615d6e7138d0d7d63a597a1aba598"
+    },
+    {
+      "source": "include/rabitqlib/quantization/rabitq_impl.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/quantization/rabitq_impl.hpp",
+      "source_sha256": "cbc0f6ae1dd986bb125ea9beefd28f29c155c67f9a05284fbd0b0922417ad94d",
+      "imported_sha256": "cbc0f6ae1dd986bb125ea9beefd28f29c155c67f9a05284fbd0b0922417ad94d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Cholesky",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Cholesky",
+      "source_sha256": "48c72c2d7b98fdb451675d2ee03850ecfdc97ea41bce55ed754b03da4ab09bd0",
+      "imported_sha256": "48c72c2d7b98fdb451675d2ee03850ecfdc97ea41bce55ed754b03da4ab09bd0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/CholmodSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/CholmodSupport",
+      "source_sha256": "26f0d1bd0677785394f1f4eb2cddf763423f703c0941b3e58373e955b0130327",
+      "imported_sha256": "26f0d1bd0677785394f1f4eb2cddf763423f703c0941b3e58373e955b0130327"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Core",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Core",
+      "source_sha256": "b8ae5f77a30d48bcaf622a56f7047baa8b2fb790f5db7361aa1d57f424fa3c1e",
+      "imported_sha256": "b8ae5f77a30d48bcaf622a56f7047baa8b2fb790f5db7361aa1d57f424fa3c1e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Dense",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Dense",
+      "source_sha256": "5325c9d4d693e504ee012c5275ad4b10b135a701cbd87c14466d2ea21ea22ee5",
+      "imported_sha256": "5325c9d4d693e504ee012c5275ad4b10b135a701cbd87c14466d2ea21ea22ee5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Eigen",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Eigen",
+      "source_sha256": "b0473b5d7c0cd9311d4a90548162e8cf160904476871f7fb749e9624e9b3dfd1",
+      "imported_sha256": "b0473b5d7c0cd9311d4a90548162e8cf160904476871f7fb749e9624e9b3dfd1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Eigenvalues",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Eigenvalues",
+      "source_sha256": "f1958a9acf3cd3e1f518d871d7dc602e8101b33ce35008b8ee8e1720845bda07",
+      "imported_sha256": "f1958a9acf3cd3e1f518d871d7dc602e8101b33ce35008b8ee8e1720845bda07"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Geometry",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Geometry",
+      "source_sha256": "f38a145ee513d1fa75bfcfc794fbc47c9de65a3af5d9fb719e057ac63302c2f8",
+      "imported_sha256": "f38a145ee513d1fa75bfcfc794fbc47c9de65a3af5d9fb719e057ac63302c2f8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Householder",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Householder",
+      "source_sha256": "1a18ea2659db15ce93de0f5aff135a536af9701da9af4f026710e56def23a559",
+      "imported_sha256": "1a18ea2659db15ce93de0f5aff135a536af9701da9af4f026710e56def23a559"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/IterativeLinearSolvers",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/IterativeLinearSolvers",
+      "source_sha256": "84ffa38ac1ef3be005bff500b78b529c1e164fc50637836ff8648fea127b74f7",
+      "imported_sha256": "84ffa38ac1ef3be005bff500b78b529c1e164fc50637836ff8648fea127b74f7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Jacobi",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Jacobi",
+      "source_sha256": "af3020c91b8e92d0734c113fb1511d96a0d6b058128911d898e0177628a358c8",
+      "imported_sha256": "af3020c91b8e92d0734c113fb1511d96a0d6b058128911d898e0177628a358c8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/KLUSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/KLUSupport",
+      "source_sha256": "bc4631eba44254d2d102287f01c02b0ca793291c976b509b7c3528157fed2f64",
+      "imported_sha256": "bc4631eba44254d2d102287f01c02b0ca793291c976b509b7c3528157fed2f64"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/LICENSE",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/LICENSE",
+      "source_sha256": "663955d9c2239a22f4ddbaa1f0a4be7bda9fbd448f4822de6ebfa0fd05858a2f",
+      "imported_sha256": "663955d9c2239a22f4ddbaa1f0a4be7bda9fbd448f4822de6ebfa0fd05858a2f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/LU",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/LU",
+      "source_sha256": "d00fab176922cdd4a231ff33ead58fc2db21a9d93034bcf7ba0c2a351a654ba4",
+      "imported_sha256": "d00fab176922cdd4a231ff33ead58fc2db21a9d93034bcf7ba0c2a351a654ba4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/MetisSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/MetisSupport",
+      "source_sha256": "e46d51d3065962408a403480f2c9cad4e7d61fb509c1e4a695274751274969a2",
+      "imported_sha256": "e46d51d3065962408a403480f2c9cad4e7d61fb509c1e4a695274751274969a2"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/OrderingMethods",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/OrderingMethods",
+      "source_sha256": "25fac81cac3358017e4dcb20f93afd0f9ce65d6041376f2ff5d96fd9d084bd72",
+      "imported_sha256": "25fac81cac3358017e4dcb20f93afd0f9ce65d6041376f2ff5d96fd9d084bd72"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/PaStiXSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/PaStiXSupport",
+      "source_sha256": "f423b95716b804f9521234dfbc58ad1a2fad9a16f84bcf16df0bb88aeecc8543",
+      "imported_sha256": "f423b95716b804f9521234dfbc58ad1a2fad9a16f84bcf16df0bb88aeecc8543"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/PardisoSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/PardisoSupport",
+      "source_sha256": "50ec5003df399fabf518620e220f71c717ff3a03a7218b8650a974dc3ad06b15",
+      "imported_sha256": "50ec5003df399fabf518620e220f71c717ff3a03a7218b8650a974dc3ad06b15"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/QR",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/QR",
+      "source_sha256": "e77ae1010e9df1dcb0e5a8756048c3880ceb023711e8d1b569e01b039f130820",
+      "imported_sha256": "e77ae1010e9df1dcb0e5a8756048c3880ceb023711e8d1b569e01b039f130820"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/QtAlignedMalloc",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/QtAlignedMalloc",
+      "source_sha256": "c466291c6e7d230e8b76b725cdad1ed82c249bf01f5ec3bcb6f3f6501ed0ff97",
+      "imported_sha256": "c466291c6e7d230e8b76b725cdad1ed82c249bf01f5ec3bcb6f3f6501ed0ff97"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SPQRSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SPQRSupport",
+      "source_sha256": "4fa2d73b998c0794682d63dffbfff795bea41a7d18665840b1c357e66ff1c89d",
+      "imported_sha256": "4fa2d73b998c0794682d63dffbfff795bea41a7d18665840b1c357e66ff1c89d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SVD",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SVD",
+      "source_sha256": "1155a32efd664cb43333a34fa8acbcbc26fa33adaedfee8e20eddf67436ae886",
+      "imported_sha256": "1155a32efd664cb43333a34fa8acbcbc26fa33adaedfee8e20eddf67436ae886"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/Sparse",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/Sparse",
+      "source_sha256": "be351b6ee652a7a20e3953d0eae216d4d01c2c26ba7b6a464bf908db3449907b",
+      "imported_sha256": "be351b6ee652a7a20e3953d0eae216d4d01c2c26ba7b6a464bf908db3449907b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SparseCholesky",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SparseCholesky",
+      "source_sha256": "6e364a72115dea57061e136a6ec804cf21c5d3cd79aa4439fd2b352f589dea9b",
+      "imported_sha256": "6e364a72115dea57061e136a6ec804cf21c5d3cd79aa4439fd2b352f589dea9b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SparseCore",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SparseCore",
+      "source_sha256": "2323c1e3179dfc6abf348161b78c1bf5ecd0caa8f452c70caca9a1cdfdd6a6ae",
+      "imported_sha256": "2323c1e3179dfc6abf348161b78c1bf5ecd0caa8f452c70caca9a1cdfdd6a6ae"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SparseLU",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SparseLU",
+      "source_sha256": "5e746ec763054931f16ede5c588aab2b44d755febdaf299f5ee4cca0346a85b6",
+      "imported_sha256": "5e746ec763054931f16ede5c588aab2b44d755febdaf299f5ee4cca0346a85b6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SparseQR",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SparseQR",
+      "source_sha256": "7433458ae0082f26aac3b544f08e5718a5d122c479a9314252b411ccf1d9b8fb",
+      "imported_sha256": "7433458ae0082f26aac3b544f08e5718a5d122c479a9314252b411ccf1d9b8fb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/StdDeque",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/StdDeque",
+      "source_sha256": "c1885167a447825ab7c35573422c3efa23dec62f5b630ac322ffe658e0ee5242",
+      "imported_sha256": "c1885167a447825ab7c35573422c3efa23dec62f5b630ac322ffe658e0ee5242"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/StdList",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/StdList",
+      "source_sha256": "03540e297ae96ed03e828d9a433bb7f5a5e93aa83c6f50a6c271c78f9283d667",
+      "imported_sha256": "03540e297ae96ed03e828d9a433bb7f5a5e93aa83c6f50a6c271c78f9283d667"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/StdVector",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/StdVector",
+      "source_sha256": "7e8b1060757a1140298ff3905df70edb59ad1083f505681df30dc9dc9963d8ab",
+      "imported_sha256": "7e8b1060757a1140298ff3905df70edb59ad1083f505681df30dc9dc9963d8ab"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/SuperLUSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/SuperLUSupport",
+      "source_sha256": "8aa601f3fa1e6bfc03b799666bf39ebc42d44917a5fb2aaa489beafd63901f72",
+      "imported_sha256": "8aa601f3fa1e6bfc03b799666bf39ebc42d44917a5fb2aaa489beafd63901f72"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/UmfPackSupport",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/UmfPackSupport",
+      "source_sha256": "003d41fa08cde68b1c4698499fa9bf9c803cebb27ae748615851519f42dc56ac",
+      "imported_sha256": "003d41fa08cde68b1c4698499fa9bf9c803cebb27ae748615851519f42dc56ac"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Cholesky/LDLT.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Cholesky/LDLT.h",
+      "source_sha256": "cc6362ddcddea1403ea9ec1cbea2ca6eaf1c5874630f1b13084f51c78f339d78",
+      "imported_sha256": "cc6362ddcddea1403ea9ec1cbea2ca6eaf1c5874630f1b13084f51c78f339d78"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Cholesky/LLT.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Cholesky/LLT.h",
+      "source_sha256": "362fe6b080c9b67d11106f821f926fa84ed24b2120fbdba2a09efb0869eef1ec",
+      "imported_sha256": "362fe6b080c9b67d11106f821f926fa84ed24b2120fbdba2a09efb0869eef1ec"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Cholesky/LLT_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Cholesky/LLT_LAPACKE.h",
+      "source_sha256": "1efc3720834ec96ba0df4a0622aa20c3a80ae48d90d60cfaad5e0bf9c1cfa04b",
+      "imported_sha256": "1efc3720834ec96ba0df4a0622aa20c3a80ae48d90d60cfaad5e0bf9c1cfa04b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/CholmodSupport/CholmodSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/CholmodSupport/CholmodSupport.h",
+      "source_sha256": "fd788dbcb353cd1f0eca9fa6ff65760b3358fbb445ee7defef1fa7c9834a5e79",
+      "imported_sha256": "fd788dbcb353cd1f0eca9fa6ff65760b3358fbb445ee7defef1fa7c9834a5e79"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ArithmeticSequence.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ArithmeticSequence.h",
+      "source_sha256": "f2f81c23a86e2fbac5847d8348f7dd10f0fe39812834d34b54446e1bca44fbaf",
+      "imported_sha256": "f2f81c23a86e2fbac5847d8348f7dd10f0fe39812834d34b54446e1bca44fbaf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Array.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Array.h",
+      "source_sha256": "dfd7ca3f27664e4e391a251de4da52b457507fc942516a21ab3e8b9fa4fe8da4",
+      "imported_sha256": "dfd7ca3f27664e4e391a251de4da52b457507fc942516a21ab3e8b9fa4fe8da4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ArrayBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ArrayBase.h",
+      "source_sha256": "87a5c07a596b5225d49b0da2585d81d146f7f23b7a0da7a20c51eb5b746afc5e",
+      "imported_sha256": "87a5c07a596b5225d49b0da2585d81d146f7f23b7a0da7a20c51eb5b746afc5e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ArrayWrapper.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ArrayWrapper.h",
+      "source_sha256": "8bd0a78e64c08c3cbde4af3536ffe6e062a12ce9c7321c43a1469704a937cce4",
+      "imported_sha256": "8bd0a78e64c08c3cbde4af3536ffe6e062a12ce9c7321c43a1469704a937cce4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Assign.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Assign.h",
+      "source_sha256": "74a400998f745e1897a3f29de0c1f10e6ad2e97269f72945abb259e6617f3b62",
+      "imported_sha256": "74a400998f745e1897a3f29de0c1f10e6ad2e97269f72945abb259e6617f3b62"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/AssignEvaluator.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/AssignEvaluator.h",
+      "source_sha256": "1395011c35047d223939e6acf3d096e83aec761286e9a109674a5b75e06d65a3",
+      "imported_sha256": "1395011c35047d223939e6acf3d096e83aec761286e9a109674a5b75e06d65a3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Assign_MKL.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Assign_MKL.h",
+      "source_sha256": "74f63085b8537072933ec173b91b4370bed151778c6435a272a941b678f8b490",
+      "imported_sha256": "74f63085b8537072933ec173b91b4370bed151778c6435a272a941b678f8b490"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/BandMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/BandMatrix.h",
+      "source_sha256": "66eb0ca50b93f4dcdc083aa21f431dd9052c319911356d9025576f0cd9c6c893",
+      "imported_sha256": "66eb0ca50b93f4dcdc083aa21f431dd9052c319911356d9025576f0cd9c6c893"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Block.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Block.h",
+      "source_sha256": "1092867fec68004388b0ba38d37ad603cc7cb5d034dc28b6fe3a82e92ad888ad",
+      "imported_sha256": "1092867fec68004388b0ba38d37ad603cc7cb5d034dc28b6fe3a82e92ad888ad"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/BooleanRedux.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/BooleanRedux.h",
+      "source_sha256": "51dbe1e82d3639ba7d30b794e0a9982cf8b3bf989955688970d4bcd723c70aa5",
+      "imported_sha256": "51dbe1e82d3639ba7d30b794e0a9982cf8b3bf989955688970d4bcd723c70aa5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CommaInitializer.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CommaInitializer.h",
+      "source_sha256": "a8027642762277db0114a8f4ef40903035484121d5b4edf9a50d5c10e11a1b20",
+      "imported_sha256": "a8027642762277db0114a8f4ef40903035484121d5b4edf9a50d5c10e11a1b20"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ConditionEstimator.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ConditionEstimator.h",
+      "source_sha256": "b9276dfb980b45f22ede4e08eee447f5e00847400e66f267967692233e424c27",
+      "imported_sha256": "b9276dfb980b45f22ede4e08eee447f5e00847400e66f267967692233e424c27"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CoreEvaluators.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CoreEvaluators.h",
+      "source_sha256": "e89d28c6eb156cb659f58a86197fde240ac4c8611a3dd2911e41a2a70d027a33",
+      "imported_sha256": "e89d28c6eb156cb659f58a86197fde240ac4c8611a3dd2911e41a2a70d027a33"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CoreIterators.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CoreIterators.h",
+      "source_sha256": "30bc5387d90ca841e6ec85686d2125318a19d4fdaa05a87fae6ffab0848f749a",
+      "imported_sha256": "30bc5387d90ca841e6ec85686d2125318a19d4fdaa05a87fae6ffab0848f749a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CwiseBinaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CwiseBinaryOp.h",
+      "source_sha256": "0316cc07e8eb45487ae4f2432791168e1c13407120014ebb3f41613ffc6e302c",
+      "imported_sha256": "0316cc07e8eb45487ae4f2432791168e1c13407120014ebb3f41613ffc6e302c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CwiseNullaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CwiseNullaryOp.h",
+      "source_sha256": "70f5b90290fd0ddc75d0b361df6e2eff4fbbbd997f5b8932140ac581802024df",
+      "imported_sha256": "70f5b90290fd0ddc75d0b361df6e2eff4fbbbd997f5b8932140ac581802024df"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CwiseTernaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CwiseTernaryOp.h",
+      "source_sha256": "97d9e03c73e1a101352d8b00ee191013b6b6acf00e90c887dd54bea4551de7be",
+      "imported_sha256": "97d9e03c73e1a101352d8b00ee191013b6b6acf00e90c887dd54bea4551de7be"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CwiseUnaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CwiseUnaryOp.h",
+      "source_sha256": "a6d4fe54959a3aad044a15f126688b445ba317c8cd8f60c3a4e18632e3015c90",
+      "imported_sha256": "a6d4fe54959a3aad044a15f126688b445ba317c8cd8f60c3a4e18632e3015c90"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/CwiseUnaryView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/CwiseUnaryView.h",
+      "source_sha256": "e59aa61f61a67532d4a6ba173844703c7e98e28d7b8c7e9cee0aa9d30d6b9675",
+      "imported_sha256": "e59aa61f61a67532d4a6ba173844703c7e98e28d7b8c7e9cee0aa9d30d6b9675"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/DenseBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/DenseBase.h",
+      "source_sha256": "868ea8559aa11e574ce734a14ea56f5ce5032746b2d73f4c8c7930f89c598227",
+      "imported_sha256": "868ea8559aa11e574ce734a14ea56f5ce5032746b2d73f4c8c7930f89c598227"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/DenseCoeffsBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/DenseCoeffsBase.h",
+      "source_sha256": "b212b3f08925bc43f7803709976f08cf4a83dadd545d558ba91599e92a009659",
+      "imported_sha256": "b212b3f08925bc43f7803709976f08cf4a83dadd545d558ba91599e92a009659"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/DenseStorage.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/DenseStorage.h",
+      "source_sha256": "235e92f381291ff75dde3f5bd838dcf7e4c6c80ba83940550e26f7ee4b7c0c88",
+      "imported_sha256": "235e92f381291ff75dde3f5bd838dcf7e4c6c80ba83940550e26f7ee4b7c0c88"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Diagonal.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Diagonal.h",
+      "source_sha256": "0e8854fc839b941abf3b09652b5fec4fa5a7cd3a44acfcb5274a7773b69b2fff",
+      "imported_sha256": "0e8854fc839b941abf3b09652b5fec4fa5a7cd3a44acfcb5274a7773b69b2fff"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/DiagonalMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/DiagonalMatrix.h",
+      "source_sha256": "2a0d43560b3cceafa37ad26cc7b44a951545e56a87d17e78b896c6d063c64718",
+      "imported_sha256": "2a0d43560b3cceafa37ad26cc7b44a951545e56a87d17e78b896c6d063c64718"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/DiagonalProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/DiagonalProduct.h",
+      "source_sha256": "ffa71f347a5914c9e9341ea82bb42bf7b6f7b8d0454bc17bc5629addb82138cb",
+      "imported_sha256": "ffa71f347a5914c9e9341ea82bb42bf7b6f7b8d0454bc17bc5629addb82138cb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Dot.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Dot.h",
+      "source_sha256": "4959d72a6f76f94171e56245e7332d555a7751d29dcbe04b3aaea2c8418e0ef5",
+      "imported_sha256": "4959d72a6f76f94171e56245e7332d555a7751d29dcbe04b3aaea2c8418e0ef5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/EigenBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/EigenBase.h",
+      "source_sha256": "f6743198aace0229364aef3842d7a4caec4c648268112d5dc88750d139f0261a",
+      "imported_sha256": "f6743198aace0229364aef3842d7a4caec4c648268112d5dc88750d139f0261a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ForceAlignedAccess.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ForceAlignedAccess.h",
+      "source_sha256": "839ba4e8d4998ef37384cdb8fe66e4aba037aefa824dac63b102f016b3670175",
+      "imported_sha256": "839ba4e8d4998ef37384cdb8fe66e4aba037aefa824dac63b102f016b3670175"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Fuzzy.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Fuzzy.h",
+      "source_sha256": "4da4a3ce3d7a85b30d35977658415e48a4c1051ed6ba1dd4c61cbc8d350027d3",
+      "imported_sha256": "4da4a3ce3d7a85b30d35977658415e48a4c1051ed6ba1dd4c61cbc8d350027d3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/GeneralProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/GeneralProduct.h",
+      "source_sha256": "bb7a50eea61bf87cebb8c5ff2553e3641e1e77d62f561838e1265bf42ac883a0",
+      "imported_sha256": "bb7a50eea61bf87cebb8c5ff2553e3641e1e77d62f561838e1265bf42ac883a0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/GenericPacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/GenericPacketMath.h",
+      "source_sha256": "15ab400433df502dc3961993455b563c55d5fa47c5a93204d12ad2a79730afdd",
+      "imported_sha256": "15ab400433df502dc3961993455b563c55d5fa47c5a93204d12ad2a79730afdd"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/GlobalFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/GlobalFunctions.h",
+      "source_sha256": "3531619ec23b938dff23039a3f0dd892be533f63d681c7d6596659dbb0ae31a2",
+      "imported_sha256": "3531619ec23b938dff23039a3f0dd892be533f63d681c7d6596659dbb0ae31a2"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/IO.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/IO.h",
+      "source_sha256": "89a4eb492f4a4a0a9e21eff6666383152d0f45ef82d4a1879e61277dafb4ad4f",
+      "imported_sha256": "89a4eb492f4a4a0a9e21eff6666383152d0f45ef82d4a1879e61277dafb4ad4f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/IndexedView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/IndexedView.h",
+      "source_sha256": "5fa91088fba62f34cf0ab4e6cbbaba88a36b7c4b195de6d2f67c96e293f32fec",
+      "imported_sha256": "5fa91088fba62f34cf0ab4e6cbbaba88a36b7c4b195de6d2f67c96e293f32fec"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Inverse.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Inverse.h",
+      "source_sha256": "5eef2f26e105349881eb1408cc2eb674b264c924d45ba3f6bfcebbcadfe6b10c",
+      "imported_sha256": "5eef2f26e105349881eb1408cc2eb674b264c924d45ba3f6bfcebbcadfe6b10c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Map.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Map.h",
+      "source_sha256": "37d3c3611a846089cb30a0d78dddc45d322985bb63fa4df5680f6f33c016a07b",
+      "imported_sha256": "37d3c3611a846089cb30a0d78dddc45d322985bb63fa4df5680f6f33c016a07b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/MapBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/MapBase.h",
+      "source_sha256": "eeecf78d69227844bb2914dc936d54db6acd9fa8ef8d0e29a9272b84938de1a0",
+      "imported_sha256": "eeecf78d69227844bb2914dc936d54db6acd9fa8ef8d0e29a9272b84938de1a0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/MathFunctions.h",
+      "source_sha256": "b3c6cd173d4ac879e568ac5708042dd0bb160805c6ba9c55da05c8134656f758",
+      "imported_sha256": "b3c6cd173d4ac879e568ac5708042dd0bb160805c6ba9c55da05c8134656f758"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/MathFunctionsImpl.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/MathFunctionsImpl.h",
+      "source_sha256": "96f735785742399ffc6109a6d8a41bf2392789b5a713c9cbfb2f089767491247",
+      "imported_sha256": "96f735785742399ffc6109a6d8a41bf2392789b5a713c9cbfb2f089767491247"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Matrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Matrix.h",
+      "source_sha256": "fd84dfc1c70b042952d299f39f05694f82ca1f17ca013eb336757a3cf71e6d11",
+      "imported_sha256": "fd84dfc1c70b042952d299f39f05694f82ca1f17ca013eb336757a3cf71e6d11"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/MatrixBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/MatrixBase.h",
+      "source_sha256": "3fca778dd610923f7c089fe6f63e600005f14fedc156851591fca999a28e592b",
+      "imported_sha256": "3fca778dd610923f7c089fe6f63e600005f14fedc156851591fca999a28e592b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/NestByValue.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/NestByValue.h",
+      "source_sha256": "5e93bda8542a8ebfb321dc9199b110a53ae2fb8f2c20e10b6f24e4379b0a27cb",
+      "imported_sha256": "5e93bda8542a8ebfb321dc9199b110a53ae2fb8f2c20e10b6f24e4379b0a27cb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/NoAlias.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/NoAlias.h",
+      "source_sha256": "229d6ce4cb8a1921cacd634f6fe64e698c54077302487c62202b845a7446618d",
+      "imported_sha256": "229d6ce4cb8a1921cacd634f6fe64e698c54077302487c62202b845a7446618d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/NumTraits.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/NumTraits.h",
+      "source_sha256": "6039578b4c17f244eb6e0b18f29b8089cb4affbd4431365e4fe8b248259199f1",
+      "imported_sha256": "6039578b4c17f244eb6e0b18f29b8089cb4affbd4431365e4fe8b248259199f1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/PartialReduxEvaluator.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/PartialReduxEvaluator.h",
+      "source_sha256": "863ec1c5b7dedcb8cebda4cb9c38b6fc77dc75d2290dbff2c39a7db98ce33a38",
+      "imported_sha256": "863ec1c5b7dedcb8cebda4cb9c38b6fc77dc75d2290dbff2c39a7db98ce33a38"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/PermutationMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/PermutationMatrix.h",
+      "source_sha256": "c4ea371dc8fd72bc610d97b9e8e241d9765c08d8d6a93e66d851fc095cd9ce60",
+      "imported_sha256": "c4ea371dc8fd72bc610d97b9e8e241d9765c08d8d6a93e66d851fc095cd9ce60"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/PlainObjectBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/PlainObjectBase.h",
+      "source_sha256": "faa54cb79fd74db5fd5fb3c6f60fc252398ebc3529e9607cfde2232244162335",
+      "imported_sha256": "faa54cb79fd74db5fd5fb3c6f60fc252398ebc3529e9607cfde2232244162335"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Product.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Product.h",
+      "source_sha256": "47958609570712d8c066c8e7529fce3346f0cc794accd390f753d9703d4842cf",
+      "imported_sha256": "47958609570712d8c066c8e7529fce3346f0cc794accd390f753d9703d4842cf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ProductEvaluators.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ProductEvaluators.h",
+      "source_sha256": "d8863af78cf309c898d34f0e8b38bb4c1b370b5622a48064211f5b3b0ad91eb0",
+      "imported_sha256": "d8863af78cf309c898d34f0e8b38bb4c1b370b5622a48064211f5b3b0ad91eb0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Random.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Random.h",
+      "source_sha256": "fc95b14bef2692647c0891b25906cac988e9519e5f719db0fd9e64e0faf0a6c2",
+      "imported_sha256": "fc95b14bef2692647c0891b25906cac988e9519e5f719db0fd9e64e0faf0a6c2"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Redux.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Redux.h",
+      "source_sha256": "dcdb68827c7f9063af745c9a0e1e85cf53c0a69b67d3d4880134a2ef8ed1f3f6",
+      "imported_sha256": "dcdb68827c7f9063af745c9a0e1e85cf53c0a69b67d3d4880134a2ef8ed1f3f6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Ref.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Ref.h",
+      "source_sha256": "f4a08654c367bde51b9589279956c23a1b747a78a5b94eb4c7e43f16ae262ebc",
+      "imported_sha256": "f4a08654c367bde51b9589279956c23a1b747a78a5b94eb4c7e43f16ae262ebc"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Replicate.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Replicate.h",
+      "source_sha256": "6f77a1da5cd4bcebe1cbb90d52fd7fc23d19a46e8b1b8f2a808ed0ecbf9bdbee",
+      "imported_sha256": "6f77a1da5cd4bcebe1cbb90d52fd7fc23d19a46e8b1b8f2a808ed0ecbf9bdbee"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Reshaped.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Reshaped.h",
+      "source_sha256": "5101b12821837460013e70adb2d542f5e623cdd6541d3604af628d2a78de7e14",
+      "imported_sha256": "5101b12821837460013e70adb2d542f5e623cdd6541d3604af628d2a78de7e14"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/ReturnByValue.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/ReturnByValue.h",
+      "source_sha256": "8a385498f0ba0c67466fe151af42e5537bd3c5d75b89d40b73bc103c77309665",
+      "imported_sha256": "8a385498f0ba0c67466fe151af42e5537bd3c5d75b89d40b73bc103c77309665"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Reverse.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Reverse.h",
+      "source_sha256": "9660864ae4cfc85dec40d82e79a598b71e5c58f53034bdd30c74093c5ab9a154",
+      "imported_sha256": "9660864ae4cfc85dec40d82e79a598b71e5c58f53034bdd30c74093c5ab9a154"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Select.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Select.h",
+      "source_sha256": "0b9bee78d59350121108778bbad203a463d81c71bfb5cd732b859c02605a1eb5",
+      "imported_sha256": "0b9bee78d59350121108778bbad203a463d81c71bfb5cd732b859c02605a1eb5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/SelfAdjointView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/SelfAdjointView.h",
+      "source_sha256": "6b05fc31cae6f946db7fcf4439efa13eb21cd9b1903ae7910cc74a611b95f68f",
+      "imported_sha256": "6b05fc31cae6f946db7fcf4439efa13eb21cd9b1903ae7910cc74a611b95f68f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/SelfCwiseBinaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/SelfCwiseBinaryOp.h",
+      "source_sha256": "4d0f02140378c8fd28bb05d2f13dc50dd867bdbc2dddce223fe37b82dbf17ab5",
+      "imported_sha256": "4d0f02140378c8fd28bb05d2f13dc50dd867bdbc2dddce223fe37b82dbf17ab5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Solve.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Solve.h",
+      "source_sha256": "d1411e4c37b3443d3422dffba6225a70ae186b0ed90a3f09bbec14727edf86f2",
+      "imported_sha256": "d1411e4c37b3443d3422dffba6225a70ae186b0ed90a3f09bbec14727edf86f2"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/SolveTriangular.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/SolveTriangular.h",
+      "source_sha256": "f29b27b474efe5692bbbf1f1863f0ddb4ccf039e3eda02796f54c33889dc86a1",
+      "imported_sha256": "f29b27b474efe5692bbbf1f1863f0ddb4ccf039e3eda02796f54c33889dc86a1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/SolverBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/SolverBase.h",
+      "source_sha256": "339ee50a16430116e2be23b29441ec7fb90b73ff2bf6be8a39e1c74fb3e171ae",
+      "imported_sha256": "339ee50a16430116e2be23b29441ec7fb90b73ff2bf6be8a39e1c74fb3e171ae"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/StableNorm.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/StableNorm.h",
+      "source_sha256": "488e4d101a3d0013b191b80c18fc1c42e988733b6109b704bfa40ccf77d3d187",
+      "imported_sha256": "488e4d101a3d0013b191b80c18fc1c42e988733b6109b704bfa40ccf77d3d187"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/StlIterators.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/StlIterators.h",
+      "source_sha256": "cae751132eb5be81f1974936f9a9041935aa8a91d7d0065b48301e4cf57b10c4",
+      "imported_sha256": "cae751132eb5be81f1974936f9a9041935aa8a91d7d0065b48301e4cf57b10c4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Stride.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Stride.h",
+      "source_sha256": "5ef8631f1222d499e9c273266ecbb8077891268b20dd11c7bf57e83b3fb7c37d",
+      "imported_sha256": "5ef8631f1222d499e9c273266ecbb8077891268b20dd11c7bf57e83b3fb7c37d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Swap.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Swap.h",
+      "source_sha256": "72add24f5533477f1aa3de05213be772eeea9a13d67db82d02f74fcce501ea40",
+      "imported_sha256": "72add24f5533477f1aa3de05213be772eeea9a13d67db82d02f74fcce501ea40"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Transpose.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Transpose.h",
+      "source_sha256": "aa104b2fdf7371831d4fcee2383deca5300c49805b99a3c883e13f40b1225750",
+      "imported_sha256": "aa104b2fdf7371831d4fcee2383deca5300c49805b99a3c883e13f40b1225750"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Transpositions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Transpositions.h",
+      "source_sha256": "390f37b9c86bed1f1708c5f7786b4609665820370a437a222da320a30c7b9867",
+      "imported_sha256": "390f37b9c86bed1f1708c5f7786b4609665820370a437a222da320a30c7b9867"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/TriangularMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/TriangularMatrix.h",
+      "source_sha256": "cc4c2090bbf9ed02b0a36129809fb2c39a32d2bd2efea05d0debb1eafe848111",
+      "imported_sha256": "cc4c2090bbf9ed02b0a36129809fb2c39a32d2bd2efea05d0debb1eafe848111"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/VectorBlock.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/VectorBlock.h",
+      "source_sha256": "d7f545fba1479e339e3040799ec1a0008b242cbafb456100cb95e7cd64586b49",
+      "imported_sha256": "d7f545fba1479e339e3040799ec1a0008b242cbafb456100cb95e7cd64586b49"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/VectorwiseOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/VectorwiseOp.h",
+      "source_sha256": "b5a10c9e4ef1a0048e8bd17e514354b1e1647b1d700d59076c1fa34ecf04bc3d",
+      "imported_sha256": "b5a10c9e4ef1a0048e8bd17e514354b1e1647b1d700d59076c1fa34ecf04bc3d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/Visitor.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/Visitor.h",
+      "source_sha256": "d32f1b4fb0065a312bf13a2861cf3c3d2ff08d2bef4ad8b014b50061ae8802a4",
+      "imported_sha256": "d32f1b4fb0065a312bf13a2861cf3c3d2ff08d2bef4ad8b014b50061ae8802a4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX/Complex.h",
+      "source_sha256": "4d178124b64acb5f5915a96f29e97f2ebe3dc44208085199bd092c37c8416f10",
+      "imported_sha256": "4d178124b64acb5f5915a96f29e97f2ebe3dc44208085199bd092c37c8416f10"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX/MathFunctions.h",
+      "source_sha256": "738a0df89554cfda21a52c3ba46e47bdff9e35199c788dd8dd4d9ba3c1598105",
+      "imported_sha256": "738a0df89554cfda21a52c3ba46e47bdff9e35199c788dd8dd4d9ba3c1598105"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX/PacketMath.h",
+      "source_sha256": "2344a8cc87e4c35891534a7ac7dde73e012935e0cd65699b18ee77bbe697fe40",
+      "imported_sha256": "2344a8cc87e4c35891534a7ac7dde73e012935e0cd65699b18ee77bbe697fe40"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX/TypeCasting.h",
+      "source_sha256": "2cabb8f3dea66b916017058b63e542d218a1ed8f59ec396ff21ae3574b59726c",
+      "imported_sha256": "2cabb8f3dea66b916017058b63e542d218a1ed8f59ec396ff21ae3574b59726c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX512/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX512/Complex.h",
+      "source_sha256": "ba0af7273126239fb7b47251be282a7c0b9eea6796dfb0f7c411be5f3b0923c4",
+      "imported_sha256": "ba0af7273126239fb7b47251be282a7c0b9eea6796dfb0f7c411be5f3b0923c4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX512/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX512/MathFunctions.h",
+      "source_sha256": "d395757ee69c05b7ff210129bd7f54207bf8ab644909a282f5184c8c356e3247",
+      "imported_sha256": "d395757ee69c05b7ff210129bd7f54207bf8ab644909a282f5184c8c356e3247"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX512/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX512/PacketMath.h",
+      "source_sha256": "394147fddc34b07d8a7a28bc80a5edd1fa5ef3f65101b5356ce168d07f71c31f",
+      "imported_sha256": "394147fddc34b07d8a7a28bc80a5edd1fa5ef3f65101b5356ce168d07f71c31f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AVX512/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AVX512/TypeCasting.h",
+      "source_sha256": "7520e93ada4015cb38bcb41359235a8bae936d2539dff86cd4afa76831751a3b",
+      "imported_sha256": "7520e93ada4015cb38bcb41359235a8bae936d2539dff86cd4afa76831751a3b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/Complex.h",
+      "source_sha256": "0944a8651cca7c25f17907c42e521be72f3bf7f9ec92e60f3e901adf800351e1",
+      "imported_sha256": "0944a8651cca7c25f17907c42e521be72f3bf7f9ec92e60f3e901adf800351e1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MathFunctions.h",
+      "source_sha256": "1a4c8e0b6d0f2cacdb516d922613f3a92bc77f8d637d98dca2668066ce0dd74b",
+      "imported_sha256": "1a4c8e0b6d0f2cacdb516d922613f3a92bc77f8d637d98dca2668066ce0dd74b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProduct.h",
+      "source_sha256": "a87e086b0361e64082e5ed84798bdb87c97505f625c9230ee2b0c0a96b4eaac6",
+      "imported_sha256": "a87e086b0361e64082e5ed84798bdb87c97505f625c9230ee2b0c0a96b4eaac6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProductCommon.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProductCommon.h",
+      "source_sha256": "04e7139eff7b385865b97f12f87f9ce34810128ba99bd06a5cf3aafcfa09fb4e",
+      "imported_sha256": "04e7139eff7b385865b97f12f87f9ce34810128ba99bd06a5cf3aafcfa09fb4e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProductMMA.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/MatrixProductMMA.h",
+      "source_sha256": "3112535947d405562c0ecd7cf47d682017a86306caf746a7671275c3f66a93d1",
+      "imported_sha256": "3112535947d405562c0ecd7cf47d682017a86306caf746a7671275c3f66a93d1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/AltiVec/PacketMath.h",
+      "source_sha256": "a0f61d6868ddd83b777f56f76006f35395bbddc808cfbfda0e1cd0e7e21e4a2f",
+      "imported_sha256": "a0f61d6868ddd83b777f56f76006f35395bbddc808cfbfda0e1cd0e7e21e4a2f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/CUDA/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/CUDA/Complex.h",
+      "source_sha256": "a1fef89efd39c77dd8d3d247034e829e93069e128cfbec9aef028e8b95c786ed",
+      "imported_sha256": "a1fef89efd39c77dd8d3d247034e829e93069e128cfbec9aef028e8b95c786ed"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/BFloat16.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/BFloat16.h",
+      "source_sha256": "1c3faf2e812a463d0be1c7dab3368ede6afe84d34f042c007bc5dad375e96bd9",
+      "imported_sha256": "1c3faf2e812a463d0be1c7dab3368ede6afe84d34f042c007bc5dad375e96bd9"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/ConjHelper.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/ConjHelper.h",
+      "source_sha256": "fad5548a5fd3f3e4bcb16fe28549ee73c1ede5f9e29f6c9022bd4d8ad3eaa520",
+      "imported_sha256": "fad5548a5fd3f3e4bcb16fe28549ee73c1ede5f9e29f6c9022bd4d8ad3eaa520"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/GenericPacketMathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/GenericPacketMathFunctions.h",
+      "source_sha256": "e3ef23672902a6a0fef39c9b6c5952ba9ed69e6a0eb32f0ecc13004fc660052d",
+      "imported_sha256": "e3ef23672902a6a0fef39c9b6c5952ba9ed69e6a0eb32f0ecc13004fc660052d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/GenericPacketMathFunctionsFwd.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/GenericPacketMathFunctionsFwd.h",
+      "source_sha256": "6bd2e4d5286176d0b823708e1a699cf4694cb74ebf54f2ddb678270db5c46717",
+      "imported_sha256": "6bd2e4d5286176d0b823708e1a699cf4694cb74ebf54f2ddb678270db5c46717"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/Half.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/Half.h",
+      "source_sha256": "bcdf4205c17eddcacbc175c1a5d188db2b36c9e5029b3829076d05dfda406f4d",
+      "imported_sha256": "bcdf4205c17eddcacbc175c1a5d188db2b36c9e5029b3829076d05dfda406f4d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/Settings.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/Settings.h",
+      "source_sha256": "41b87a95edc400e7545f7273c59742abc95defae6ca7cd85f962d51a7a8fb790",
+      "imported_sha256": "41b87a95edc400e7545f7273c59742abc95defae6ca7cd85f962d51a7a8fb790"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/Default/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/Default/TypeCasting.h",
+      "source_sha256": "4efe3b7a0099da41b42040000a9c4b92bd48efb35b9505c453b5f3d304fb4f75",
+      "imported_sha256": "4efe3b7a0099da41b42040000a9c4b92bd48efb35b9505c453b5f3d304fb4f75"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/GPU/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/GPU/MathFunctions.h",
+      "source_sha256": "58d0579333d6cd9c7e6bd5582abfeedc0da64bcd1e011c2263c2dd7e54664f57",
+      "imported_sha256": "58d0579333d6cd9c7e6bd5582abfeedc0da64bcd1e011c2263c2dd7e54664f57"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/GPU/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/GPU/PacketMath.h",
+      "source_sha256": "d8a2a3529c220e0cdbc4c5e847007b160e41b3df0db069fd456aa0bddd0ba03d",
+      "imported_sha256": "d8a2a3529c220e0cdbc4c5e847007b160e41b3df0db069fd456aa0bddd0ba03d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/GPU/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/GPU/TypeCasting.h",
+      "source_sha256": "1d1d4e3872dbf4d9ab22c5b67644418265a0a641e26d6c340d4809caa3bc2e98",
+      "imported_sha256": "1d1d4e3872dbf4d9ab22c5b67644418265a0a641e26d6c340d4809caa3bc2e98"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/HIP/hcc/math_constants.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/HIP/hcc/math_constants.h",
+      "source_sha256": "4d86a4154ef20638d72ab2f585ec61f6c0881908d986a2b4ffb44efa97f97246",
+      "imported_sha256": "4d86a4154ef20638d72ab2f585ec61f6c0881908d986a2b4ffb44efa97f97246"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/MSA/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/MSA/Complex.h",
+      "source_sha256": "983d7be618a33cb2ae3d6320246f139f5739bb25337512cc252cde6364879164",
+      "imported_sha256": "983d7be618a33cb2ae3d6320246f139f5739bb25337512cc252cde6364879164"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/MSA/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/MSA/MathFunctions.h",
+      "source_sha256": "f160e1405034b3fbbd2cd64e87a27c0d0faf90072139b937bf6eb71f36983f28",
+      "imported_sha256": "f160e1405034b3fbbd2cd64e87a27c0d0faf90072139b937bf6eb71f36983f28"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/MSA/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/MSA/PacketMath.h",
+      "source_sha256": "3dac6c302dca476b5fbdde9e5871b7faf48473fd74d2602c07e7483a2cb864ce",
+      "imported_sha256": "3dac6c302dca476b5fbdde9e5871b7faf48473fd74d2602c07e7483a2cb864ce"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/NEON/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/NEON/Complex.h",
+      "source_sha256": "cb2278d5839544bac8ab0b38f4375b8badffb1c746a8d6af99766fe764afedf6",
+      "imported_sha256": "cb2278d5839544bac8ab0b38f4375b8badffb1c746a8d6af99766fe764afedf6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/NEON/GeneralBlockPanelKernel.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/NEON/GeneralBlockPanelKernel.h",
+      "source_sha256": "54d3101e149f291848d1170a2616a5388f2c91b878a74f2d3163da82207ea7a7",
+      "imported_sha256": "54d3101e149f291848d1170a2616a5388f2c91b878a74f2d3163da82207ea7a7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/NEON/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/NEON/MathFunctions.h",
+      "source_sha256": "8cd8f6d69e1b8c60eaa88c0f951eab619b8ece903393d7f90d726aa487da816e",
+      "imported_sha256": "8cd8f6d69e1b8c60eaa88c0f951eab619b8ece903393d7f90d726aa487da816e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/NEON/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/NEON/PacketMath.h",
+      "source_sha256": "3e13180a0dd01b9a69bd17f17aa869c38c4515df1cc83043b88f43d9a131b75f",
+      "imported_sha256": "3e13180a0dd01b9a69bd17f17aa869c38c4515df1cc83043b88f43d9a131b75f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/NEON/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/NEON/TypeCasting.h",
+      "source_sha256": "736c98b778932aba5914b418fd810a13557a2eb786b5d11e736828a9f3ee7081",
+      "imported_sha256": "736c98b778932aba5914b418fd810a13557a2eb786b5d11e736828a9f3ee7081"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SSE/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SSE/Complex.h",
+      "source_sha256": "87a6f05e1122f886550a985ccb79150be09999352d7cbce86bbeed648a2157a9",
+      "imported_sha256": "87a6f05e1122f886550a985ccb79150be09999352d7cbce86bbeed648a2157a9"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SSE/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SSE/MathFunctions.h",
+      "source_sha256": "7007304a115b9f42b483e4e2ca836a0ec578d68a89a3f90c048ddebf074673e5",
+      "imported_sha256": "7007304a115b9f42b483e4e2ca836a0ec578d68a89a3f90c048ddebf074673e5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SSE/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SSE/PacketMath.h",
+      "source_sha256": "a5e086e96bf7876bd9da0c43117f482435d04cdcbc4cf9c104c1724429804130",
+      "imported_sha256": "a5e086e96bf7876bd9da0c43117f482435d04cdcbc4cf9c104c1724429804130"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SSE/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SSE/TypeCasting.h",
+      "source_sha256": "52ad99dd125e1b5b7b6480a8a5219344e7b30def71c08fe74d14304856842e60",
+      "imported_sha256": "52ad99dd125e1b5b7b6480a8a5219344e7b30def71c08fe74d14304856842e60"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SVE/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SVE/MathFunctions.h",
+      "source_sha256": "02b207493b1cbbbefa644a22b61d4cbd5d7a07114086f57788b61d0b8cd81e32",
+      "imported_sha256": "02b207493b1cbbbefa644a22b61d4cbd5d7a07114086f57788b61d0b8cd81e32"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SVE/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SVE/PacketMath.h",
+      "source_sha256": "1319cfeb0c5e4dffa6b90125d241aaa7d685ac6e9907558445a124449c57eaff",
+      "imported_sha256": "1319cfeb0c5e4dffa6b90125d241aaa7d685ac6e9907558445a124449c57eaff"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SVE/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SVE/TypeCasting.h",
+      "source_sha256": "7aecdde0b05a3dc66fbaa138c3658c885cb2b1049813f368f4c76a19f3bbbe34",
+      "imported_sha256": "7aecdde0b05a3dc66fbaa138c3658c885cb2b1049813f368f4c76a19f3bbbe34"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SYCL/InteropHeaders.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SYCL/InteropHeaders.h",
+      "source_sha256": "d86e4da28f7f77f32f2686deccdf5ec57d737af7d6fe5a3a95feb76358f53934",
+      "imported_sha256": "d86e4da28f7f77f32f2686deccdf5ec57d737af7d6fe5a3a95feb76358f53934"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SYCL/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SYCL/MathFunctions.h",
+      "source_sha256": "4b3ba6d7dfe783fa17f93b7fa3290e1ee107b14905f3c815e4e137e9a32ea43f",
+      "imported_sha256": "4b3ba6d7dfe783fa17f93b7fa3290e1ee107b14905f3c815e4e137e9a32ea43f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SYCL/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SYCL/PacketMath.h",
+      "source_sha256": "75992417c92ed3317ffe971893214d09e904860df1062f4d0cf4e65038b0a4b5",
+      "imported_sha256": "75992417c92ed3317ffe971893214d09e904860df1062f4d0cf4e65038b0a4b5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SYCL/SyclMemoryModel.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SYCL/SyclMemoryModel.h",
+      "source_sha256": "2083acd84d60e7f88a69eb85f9a0bcca0270ead6fc2a70cbce494c864c064359",
+      "imported_sha256": "2083acd84d60e7f88a69eb85f9a0bcca0270ead6fc2a70cbce494c864c064359"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/SYCL/TypeCasting.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/SYCL/TypeCasting.h",
+      "source_sha256": "07fa00a20f141e40e7da538ef8385546801a0164f65ade6c04758020a0bdffba",
+      "imported_sha256": "07fa00a20f141e40e7da538ef8385546801a0164f65ade6c04758020a0bdffba"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/ZVector/Complex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/ZVector/Complex.h",
+      "source_sha256": "e64803d7d661abd130c48ecf864441c0b9c0d5c5c3e2e8a8508a3b87f0db2c5f",
+      "imported_sha256": "e64803d7d661abd130c48ecf864441c0b9c0d5c5c3e2e8a8508a3b87f0db2c5f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/ZVector/MathFunctions.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/ZVector/MathFunctions.h",
+      "source_sha256": "00be6ff296decb639ebb277be64555983e8edaaf7cc1a4a790a627b33375f44b",
+      "imported_sha256": "00be6ff296decb639ebb277be64555983e8edaaf7cc1a4a790a627b33375f44b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/arch/ZVector/PacketMath.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/arch/ZVector/PacketMath.h",
+      "source_sha256": "174d47bf730813229a9ddfd5c52e24bd51cc832042e18a1a7a99e984f2a22176",
+      "imported_sha256": "174d47bf730813229a9ddfd5c52e24bd51cc832042e18a1a7a99e984f2a22176"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/AssignmentFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/AssignmentFunctors.h",
+      "source_sha256": "d8f1b1224441face5efe4271d7354683ec16b5cbe8ec89e7c728c13ff85bf160",
+      "imported_sha256": "d8f1b1224441face5efe4271d7354683ec16b5cbe8ec89e7c728c13ff85bf160"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/BinaryFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/BinaryFunctors.h",
+      "source_sha256": "0b07cd6d40cbf96561824eb80aae5af719dcfe1c4d349b011100acdb57821997",
+      "imported_sha256": "0b07cd6d40cbf96561824eb80aae5af719dcfe1c4d349b011100acdb57821997"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/NullaryFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/NullaryFunctors.h",
+      "source_sha256": "190a630e8482bc0b94383c67b9b5d7a41f3c26cb10894d54597cfde3d73ba70b",
+      "imported_sha256": "190a630e8482bc0b94383c67b9b5d7a41f3c26cb10894d54597cfde3d73ba70b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/StlFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/StlFunctors.h",
+      "source_sha256": "71823e6fcbe89847bb7caef19e837b1eed1c32442cdf8d104103888c4ffe4bb0",
+      "imported_sha256": "71823e6fcbe89847bb7caef19e837b1eed1c32442cdf8d104103888c4ffe4bb0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/TernaryFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/TernaryFunctors.h",
+      "source_sha256": "0fc3c1aa2a5ad2f1ca9cdbcf37a633712cc0452b107ed63f6a4cf10d67111168",
+      "imported_sha256": "0fc3c1aa2a5ad2f1ca9cdbcf37a633712cc0452b107ed63f6a4cf10d67111168"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/functors/UnaryFunctors.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/functors/UnaryFunctors.h",
+      "source_sha256": "905b211c94fccc6047ae262673c644ab829c8275e98b6f4b8978c73cb349462a",
+      "imported_sha256": "905b211c94fccc6047ae262673c644ab829c8275e98b6f4b8978c73cb349462a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralBlockPanelKernel.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralBlockPanelKernel.h",
+      "source_sha256": "b1824739dc829bdd5c87d4e2035794230f5ea8e3007977e378399e19562b98f3",
+      "imported_sha256": "b1824739dc829bdd5c87d4e2035794230f5ea8e3007977e378399e19562b98f3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrix.h",
+      "source_sha256": "df7aa1bd01e45c47e71ea38ce579d81f5b79aa55ded40f21685802946564ec20",
+      "imported_sha256": "df7aa1bd01e45c47e71ea38ce579d81f5b79aa55ded40f21685802946564ec20"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h",
+      "source_sha256": "b415ab39c5c03ea6f2f3f749ba623424b9f1e0f7ea1e7df71e160f2ee391796e",
+      "imported_sha256": "b415ab39c5c03ea6f2f3f749ba623424b9f1e0f7ea1e7df71e160f2ee391796e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h",
+      "source_sha256": "973de070289ba262340b5d463fd59625f2f125691fa3322e69e28f58da7c2a84",
+      "imported_sha256": "973de070289ba262340b5d463fd59625f2f125691fa3322e69e28f58da7c2a84"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h",
+      "source_sha256": "79cd720f0506bcadc600ea2de3405a4457536e4a35beb4078161f75f76134f67",
+      "imported_sha256": "79cd720f0506bcadc600ea2de3405a4457536e4a35beb4078161f75f76134f67"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixVector.h",
+      "source_sha256": "ea08550845627bf3d7c0ad30ed7061d5eb9590b1fb548fd3d8fde906707b11f3",
+      "imported_sha256": "ea08550845627bf3d7c0ad30ed7061d5eb9590b1fb548fd3d8fde906707b11f3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h",
+      "source_sha256": "999b5819ab540b4f9bba07cb57763cd433c9cbc1fea66e05da12aa41064e7693",
+      "imported_sha256": "999b5819ab540b4f9bba07cb57763cd433c9cbc1fea66e05da12aa41064e7693"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/Parallelizer.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/Parallelizer.h",
+      "source_sha256": "2c54b4e297c0cb187ee47aec319eead343a6fcfdb3f414d42758bfd68ff4938d",
+      "imported_sha256": "2c54b4e297c0cb187ee47aec319eead343a6fcfdb3f414d42758bfd68ff4938d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixMatrix.h",
+      "source_sha256": "e204012c3add3c045207b5e4e7eeea5f83bf3da9d0c6f7e287acea1c58a4b22d",
+      "imported_sha256": "e204012c3add3c045207b5e4e7eeea5f83bf3da9d0c6f7e287acea1c58a4b22d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h",
+      "source_sha256": "74ed10cd34a5118d0300b7c91cd08bbfe56ac9659d18a383eb8d2aaf3a070cec",
+      "imported_sha256": "74ed10cd34a5118d0300b7c91cd08bbfe56ac9659d18a383eb8d2aaf3a070cec"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixVector.h",
+      "source_sha256": "5fd54cb6290c9437875265e5b673797f4cdb6e45c791fe0247b41e098e331055",
+      "imported_sha256": "5fd54cb6290c9437875265e5b673797f4cdb6e45c791fe0247b41e098e331055"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h",
+      "source_sha256": "10aad74414d67ae92cd458c5267f84c441dd2c3de826cd4f9333aa042cc76b1c",
+      "imported_sha256": "10aad74414d67ae92cd458c5267f84c441dd2c3de826cd4f9333aa042cc76b1c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointProduct.h",
+      "source_sha256": "0e47b0162e6cfd1d8dc314d7cbc105529936b03a802f546c1226d11b6a38dbe6",
+      "imported_sha256": "0e47b0162e6cfd1d8dc314d7cbc105529936b03a802f546c1226d11b6a38dbe6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/SelfadjointRank2Update.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/SelfadjointRank2Update.h",
+      "source_sha256": "1a3064b1b2d3521f1d4b022ba0103314065dde9366686ce0c2af72fc07b38406",
+      "imported_sha256": "1a3064b1b2d3521f1d4b022ba0103314065dde9366686ce0c2af72fc07b38406"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixMatrix.h",
+      "source_sha256": "8a726cee8a7523991eaf9d5a4cef2b691c318394d64f4b2f55e13588a599ed16",
+      "imported_sha256": "8a726cee8a7523991eaf9d5a4cef2b691c318394d64f4b2f55e13588a599ed16"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h",
+      "source_sha256": "b09bbec2fc888d442697d26d62571f1a991b4a12f347748930f3592d537c39da",
+      "imported_sha256": "b09bbec2fc888d442697d26d62571f1a991b4a12f347748930f3592d537c39da"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixVector.h",
+      "source_sha256": "a45c7b2e4fa32c52372f9d635c6599a1844f9053edd9108774e64972b0bdc8fe",
+      "imported_sha256": "a45c7b2e4fa32c52372f9d635c6599a1844f9053edd9108774e64972b0bdc8fe"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h",
+      "source_sha256": "4ac4ff35409d8875e57af5cec80ae7c537b64034e2720d401fbeba4ec7268749",
+      "imported_sha256": "4ac4ff35409d8875e57af5cec80ae7c537b64034e2720d401fbeba4ec7268749"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverMatrix.h",
+      "source_sha256": "7bbe79b4abbec7879feb1c84c2bf92b8e5039baa7a7bcfeee9decb3abf544550",
+      "imported_sha256": "7bbe79b4abbec7879feb1c84c2bf92b8e5039baa7a7bcfeee9decb3abf544550"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h",
+      "source_sha256": "d9c296e7a71f502a2804bbf8a704b4f5e866b5978d6f941685c3548ba5e6a842",
+      "imported_sha256": "d9c296e7a71f502a2804bbf8a704b4f5e866b5978d6f941685c3548ba5e6a842"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/products/TriangularSolverVector.h",
+      "source_sha256": "5febd767c379a570c5f918b07890f75c87bf9ae4d6b0f565456f275b308d10be",
+      "imported_sha256": "5febd767c379a570c5f918b07890f75c87bf9ae4d6b0f565456f275b308d10be"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/BlasUtil.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/BlasUtil.h",
+      "source_sha256": "478865886bd886a3b0f6e221ff9b811be3742274d1fa260c7fbd525a2bc55716",
+      "imported_sha256": "478865886bd886a3b0f6e221ff9b811be3742274d1fa260c7fbd525a2bc55716"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/ConfigureVectorization.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/ConfigureVectorization.h",
+      "source_sha256": "3eec3fdfce850c87aca7bac45ce2bf1898804a845e29a9548c3e98e4c82ad35a",
+      "imported_sha256": "3eec3fdfce850c87aca7bac45ce2bf1898804a845e29a9548c3e98e4c82ad35a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/Constants.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/Constants.h",
+      "source_sha256": "b6d536a1e9b8cc1c685f7c6cf794ebe70a672099370fe57e475f6ca1739236a0",
+      "imported_sha256": "b6d536a1e9b8cc1c685f7c6cf794ebe70a672099370fe57e475f6ca1739236a0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/DisableStupidWarnings.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/DisableStupidWarnings.h",
+      "source_sha256": "62dab2d7be4090aaa05e3d2c6581b249b7365726bb7506cdc910552fc8386c55",
+      "imported_sha256": "62dab2d7be4090aaa05e3d2c6581b249b7365726bb7506cdc910552fc8386c55"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/ForwardDeclarations.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/ForwardDeclarations.h",
+      "source_sha256": "661744e9dc5ad6fbd6325a068f188d56a7d4c53a2e577bdf02d2032e83f93541",
+      "imported_sha256": "661744e9dc5ad6fbd6325a068f188d56a7d4c53a2e577bdf02d2032e83f93541"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/IndexedViewHelper.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/IndexedViewHelper.h",
+      "source_sha256": "e88f96baa8297511a439002d23b0ae30045e9c5438a4b9b3680e4182d6e2b6d5",
+      "imported_sha256": "e88f96baa8297511a439002d23b0ae30045e9c5438a4b9b3680e4182d6e2b6d5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/IntegralConstant.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/IntegralConstant.h",
+      "source_sha256": "32c1a018fdf7bd1f36e310773032566f351aff3b5a00d5f239e24d0c2809ee69",
+      "imported_sha256": "32c1a018fdf7bd1f36e310773032566f351aff3b5a00d5f239e24d0c2809ee69"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/MKL_support.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/MKL_support.h",
+      "source_sha256": "487f0c220d40b8418876b5c7d9032d3597374cdff790d4022e8f4eea932cf620",
+      "imported_sha256": "487f0c220d40b8418876b5c7d9032d3597374cdff790d4022e8f4eea932cf620"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/Macros.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/Macros.h",
+      "source_sha256": "8d73259b4ba482e6dbd11b31d8887fd350dfb0836700d32793446bba6ab1ae7a",
+      "imported_sha256": "8d73259b4ba482e6dbd11b31d8887fd350dfb0836700d32793446bba6ab1ae7a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/Memory.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/Memory.h",
+      "source_sha256": "e25565aa6ae3e612c26b92cfe731a5df90d7edfa667be5b987c2801c70b2c95c",
+      "imported_sha256": "e25565aa6ae3e612c26b92cfe731a5df90d7edfa667be5b987c2801c70b2c95c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/Meta.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/Meta.h",
+      "source_sha256": "4ee6855c8f37669b8c86483342c56f9ad06f2dfc69abfe4691298a8d2a944202",
+      "imported_sha256": "4ee6855c8f37669b8c86483342c56f9ad06f2dfc69abfe4691298a8d2a944202"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/NonMPL2.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/NonMPL2.h",
+      "source_sha256": "45e90a0556a27623a911bf6c9bc81cb3dfcbc9ec82dce28e4af7f8255ea5dad7",
+      "imported_sha256": "45e90a0556a27623a911bf6c9bc81cb3dfcbc9ec82dce28e4af7f8255ea5dad7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/ReenableStupidWarnings.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/ReenableStupidWarnings.h",
+      "source_sha256": "e0200d2f76f2944831e0c12973faa72fabb0445bbafd65c7ae516ab8cd67ade5",
+      "imported_sha256": "e0200d2f76f2944831e0c12973faa72fabb0445bbafd65c7ae516ab8cd67ade5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/ReshapedHelper.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/ReshapedHelper.h",
+      "source_sha256": "22248d610522a08d515c72596f8e69a5bd0f6930545a9846c575da55119b3512",
+      "imported_sha256": "22248d610522a08d515c72596f8e69a5bd0f6930545a9846c575da55119b3512"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/StaticAssert.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/StaticAssert.h",
+      "source_sha256": "16ecc74d0318e07c847799e6757a8b4ddd7769d6f07077a180a7def3eeb6d1bd",
+      "imported_sha256": "16ecc74d0318e07c847799e6757a8b4ddd7769d6f07077a180a7def3eeb6d1bd"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/SymbolicIndex.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/SymbolicIndex.h",
+      "source_sha256": "db1f06b723a94199dc28c614e4d91d25ab51612d3c1bd705627376ff1d0c9efe",
+      "imported_sha256": "db1f06b723a94199dc28c614e4d91d25ab51612d3c1bd705627376ff1d0c9efe"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Core/util/XprHelper.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Core/util/XprHelper.h",
+      "source_sha256": "f75169c4a2ca3e51a8e6ac423ff34ad827bf73264ccbbdfa3b11ad19f8ef10de",
+      "imported_sha256": "f75169c4a2ca3e51a8e6ac423ff34ad827bf73264ccbbdfa3b11ad19f8ef10de"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexEigenSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexEigenSolver.h",
+      "source_sha256": "b250df4b92be54eaf46979f8338413d887d011c1e81fe5b71dca98a85a8a6357",
+      "imported_sha256": "b250df4b92be54eaf46979f8338413d887d011c1e81fe5b71dca98a85a8a6357"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexSchur.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexSchur.h",
+      "source_sha256": "6712338e5d075ddd3da52d2f28ba29b192ea479211c097161844dcd0182ea79a",
+      "imported_sha256": "6712338e5d075ddd3da52d2f28ba29b192ea479211c097161844dcd0182ea79a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h",
+      "source_sha256": "fd6553437ebd9249d16e31ae2aeed73c983cafa3cab835cc9829343e5ccefa4f",
+      "imported_sha256": "fd6553437ebd9249d16e31ae2aeed73c983cafa3cab835cc9829343e5ccefa4f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/EigenSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/EigenSolver.h",
+      "source_sha256": "764e4b1848ee16fbd42450a100b8b1e965f1f92f41ba48beb2bb6010ba0b8440",
+      "imported_sha256": "764e4b1848ee16fbd42450a100b8b1e965f1f92f41ba48beb2bb6010ba0b8440"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h",
+      "source_sha256": "82385783f608b22cec0699df6e58e3b8e9fbce6b40933d257afbd1651cd74f87",
+      "imported_sha256": "82385783f608b22cec0699df6e58e3b8e9fbce6b40933d257afbd1651cd74f87"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h",
+      "source_sha256": "e3fac33dfc12461ba86cbbca58bb12d9d4750bfd4eea87d63d7f3524a5d3b084",
+      "imported_sha256": "e3fac33dfc12461ba86cbbca58bb12d9d4750bfd4eea87d63d7f3524a5d3b084"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/HessenbergDecomposition.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/HessenbergDecomposition.h",
+      "source_sha256": "3b956b75ba5931285e0ac53f6d4b2bed51ffb09528e4687c460f83d2712de95b",
+      "imported_sha256": "3b956b75ba5931285e0ac53f6d4b2bed51ffb09528e4687c460f83d2712de95b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h",
+      "source_sha256": "bb128af249c17734931952429fcaadd3b27f4aa183b4d7d3ededb3e30ab525e8",
+      "imported_sha256": "bb128af249c17734931952429fcaadd3b27f4aa183b4d7d3ededb3e30ab525e8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/RealQZ.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/RealQZ.h",
+      "source_sha256": "f3bd8d77d945ad3090c21b4b582c80b6765e1b59a76865a2d50eb422a556198a",
+      "imported_sha256": "f3bd8d77d945ad3090c21b4b582c80b6765e1b59a76865a2d50eb422a556198a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/RealSchur.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/RealSchur.h",
+      "source_sha256": "60870a96d42c0195cfadf9169cce3895602f881e040d0f31ff564a95a3ea672f",
+      "imported_sha256": "60870a96d42c0195cfadf9169cce3895602f881e040d0f31ff564a95a3ea672f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h",
+      "source_sha256": "30aafb5459f8297d6851aa6a8b651275565d9faa451332d04af50713c043562b",
+      "imported_sha256": "30aafb5459f8297d6851aa6a8b651275565d9faa451332d04af50713c043562b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+      "source_sha256": "0bdabc304df900248cc79eef7e1b9df57a6b2586b3b9d93d421344b806c26ee6",
+      "imported_sha256": "0bdabc304df900248cc79eef7e1b9df57a6b2586b3b9d93d421344b806c26ee6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h",
+      "source_sha256": "595ae077aa38318a867fa6543fea9fb5e6a545532f27d676958cc1fae6ef6fa4",
+      "imported_sha256": "595ae077aa38318a867fa6543fea9fb5e6a545532f27d676958cc1fae6ef6fa4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Eigenvalues/Tridiagonalization.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Eigenvalues/Tridiagonalization.h",
+      "source_sha256": "9a794635df375a50699403e22410f6a6dc7ccfec85b6a6ac1fba04ca01051047",
+      "imported_sha256": "9a794635df375a50699403e22410f6a6dc7ccfec85b6a6ac1fba04ca01051047"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/AlignedBox.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/AlignedBox.h",
+      "source_sha256": "2c95fadc8549fa236d6f8aa38022badf9186d63aed12a102bb806bcf0f6d522e",
+      "imported_sha256": "2c95fadc8549fa236d6f8aa38022badf9186d63aed12a102bb806bcf0f6d522e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/AngleAxis.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/AngleAxis.h",
+      "source_sha256": "856101e8feca9153a3503ca23e475567bbf53e87c3508405403560b871b27425",
+      "imported_sha256": "856101e8feca9153a3503ca23e475567bbf53e87c3508405403560b871b27425"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/EulerAngles.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/EulerAngles.h",
+      "source_sha256": "32f9878596c7d0d7fd633646f01f188d7bc75d0b16cf75bc1d8f9b6c25e85fa9",
+      "imported_sha256": "32f9878596c7d0d7fd633646f01f188d7bc75d0b16cf75bc1d8f9b6c25e85fa9"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Homogeneous.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Homogeneous.h",
+      "source_sha256": "1ae6f1571132c5216266218c4df967edd997c376b2ab9e48add27947ea316fdf",
+      "imported_sha256": "1ae6f1571132c5216266218c4df967edd997c376b2ab9e48add27947ea316fdf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Hyperplane.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Hyperplane.h",
+      "source_sha256": "2f9aa22b1ec7f26869bdfdde5e13c2a5cb9dcff8f0e1727b9ef684b72f36aad7",
+      "imported_sha256": "2f9aa22b1ec7f26869bdfdde5e13c2a5cb9dcff8f0e1727b9ef684b72f36aad7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/OrthoMethods.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/OrthoMethods.h",
+      "source_sha256": "3d403f7f2ce47d4a06d7a4e5be2f362c2b0ed8bc7c2c044de7a09fb231956c44",
+      "imported_sha256": "3d403f7f2ce47d4a06d7a4e5be2f362c2b0ed8bc7c2c044de7a09fb231956c44"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/ParametrizedLine.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/ParametrizedLine.h",
+      "source_sha256": "fd7066d3470cbb61af4b173f56ad0bc37098ea03d03e62eb7ae8f7f998469121",
+      "imported_sha256": "fd7066d3470cbb61af4b173f56ad0bc37098ea03d03e62eb7ae8f7f998469121"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Quaternion.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Quaternion.h",
+      "source_sha256": "8e281fe29f4971828e790f334653fcaaafe34a7853b0eece4224a63a1ccf1fa8",
+      "imported_sha256": "8e281fe29f4971828e790f334653fcaaafe34a7853b0eece4224a63a1ccf1fa8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Rotation2D.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Rotation2D.h",
+      "source_sha256": "649177f4b89e0f22d573cdb00818dcbfef3d5d49a38223fcfc51ad5b8961bce3",
+      "imported_sha256": "649177f4b89e0f22d573cdb00818dcbfef3d5d49a38223fcfc51ad5b8961bce3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/RotationBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/RotationBase.h",
+      "source_sha256": "122a302f2f3593ac3951e4408c7d1404360a031baa0380617ba1dd6dd64518cc",
+      "imported_sha256": "122a302f2f3593ac3951e4408c7d1404360a031baa0380617ba1dd6dd64518cc"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Scaling.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Scaling.h",
+      "source_sha256": "54fd4bf3253dfa48d7811a4944343f3286e6e05e9ce3b58142edaa17be6a6cec",
+      "imported_sha256": "54fd4bf3253dfa48d7811a4944343f3286e6e05e9ce3b58142edaa17be6a6cec"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Transform.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Transform.h",
+      "source_sha256": "fcbc9705bef43e82d419e6aced39194400c11fc807289a74d6e8bb4662667ac3",
+      "imported_sha256": "fcbc9705bef43e82d419e6aced39194400c11fc807289a74d6e8bb4662667ac3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Translation.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Translation.h",
+      "source_sha256": "3107a52aa3043cc603c41c7fa3f0629f58f89e52f9690aee9f3dff4d8adc4639",
+      "imported_sha256": "3107a52aa3043cc603c41c7fa3f0629f58f89e52f9690aee9f3dff4d8adc4639"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/Umeyama.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/Umeyama.h",
+      "source_sha256": "f1606af01abe78e0b008fa42109bc257801d1bd8bef8c60fb884337a48e5b470",
+      "imported_sha256": "f1606af01abe78e0b008fa42109bc257801d1bd8bef8c60fb884337a48e5b470"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Geometry/arch/Geometry_SIMD.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Geometry/arch/Geometry_SIMD.h",
+      "source_sha256": "2b4a5474d7503125279f1de2bae8ef56f99ac52dfecd3218fff5d79027779a7a",
+      "imported_sha256": "2b4a5474d7503125279f1de2bae8ef56f99ac52dfecd3218fff5d79027779a7a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Householder/BlockHouseholder.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Householder/BlockHouseholder.h",
+      "source_sha256": "813fa52ae65ce67f45ca5437740445e52d1aecce09f77993ee847323cecaa1ae",
+      "imported_sha256": "813fa52ae65ce67f45ca5437740445e52d1aecce09f77993ee847323cecaa1ae"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Householder/Householder.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Householder/Householder.h",
+      "source_sha256": "4a6f35c282bd96fad7f18717a8b4ad66a7681f2594c4ef5594b3b313688e8b2d",
+      "imported_sha256": "4a6f35c282bd96fad7f18717a8b4ad66a7681f2594c4ef5594b3b313688e8b2d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Householder/HouseholderSequence.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Householder/HouseholderSequence.h",
+      "source_sha256": "a89c7bbc9a8e7f0ba4d9b382c13fea480e2e411039b832b4ee584c3a624d4ce8",
+      "imported_sha256": "a89c7bbc9a8e7f0ba4d9b382c13fea480e2e411039b832b4ee584c3a624d4ce8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h",
+      "source_sha256": "60c090eb1e3ff9defd825139aee3e5cda77ace7850158d3682a574ca698676c6",
+      "imported_sha256": "60c090eb1e3ff9defd825139aee3e5cda77ace7850158d3682a574ca698676c6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h",
+      "source_sha256": "2403309090c32abbcca5a2b8882650def8576aa6c395e32c01a7c47edf006b2d",
+      "imported_sha256": "2403309090c32abbcca5a2b8882650def8576aa6c395e32c01a7c47edf006b2d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h",
+      "source_sha256": "6c07bb017ccea21a1e478840497312e90287b76188030bc45cdd73c1adf611d3",
+      "imported_sha256": "6c07bb017ccea21a1e478840497312e90287b76188030bc45cdd73c1adf611d3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h",
+      "source_sha256": "97fa9e7bae5bfc0c85e783504c486a8909f8c29c45d043a041fae3cca33e67ea",
+      "imported_sha256": "97fa9e7bae5bfc0c85e783504c486a8909f8c29c45d043a041fae3cca33e67ea"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h",
+      "source_sha256": "f4de992f883b769435f82fc0601af68d5e11d67ad3a18820d42252b2d4fc5484",
+      "imported_sha256": "f4de992f883b769435f82fc0601af68d5e11d67ad3a18820d42252b2d4fc5484"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h",
+      "source_sha256": "455524dc3f734e24a1cd1ebca3c378aa5b2b6e7bb7c47018fb10873fbf48c6ca",
+      "imported_sha256": "455524dc3f734e24a1cd1ebca3c378aa5b2b6e7bb7c47018fb10873fbf48c6ca"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h",
+      "source_sha256": "8714d9c87d2f7cdb46b9c16b73f2679666819ef9db630a55ea59c956b4190c1f",
+      "imported_sha256": "8714d9c87d2f7cdb46b9c16b73f2679666819ef9db630a55ea59c956b4190c1f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h",
+      "source_sha256": "b24501200d464e6de972131a8309fe434bc496c6c12b2397a957d9e8883d829d",
+      "imported_sha256": "b24501200d464e6de972131a8309fe434bc496c6c12b2397a957d9e8883d829d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/Jacobi/Jacobi.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/Jacobi/Jacobi.h",
+      "source_sha256": "7aaafa09ea25c02f6cf78c9e08594617f31d4afced1aa0ebf0e2e74fa5c3a74f",
+      "imported_sha256": "7aaafa09ea25c02f6cf78c9e08594617f31d4afced1aa0ebf0e2e74fa5c3a74f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/KLUSupport/KLUSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/KLUSupport/KLUSupport.h",
+      "source_sha256": "b718e630511ba765f6c4298f30385e646b51fb003f0274164824a79fbb005514",
+      "imported_sha256": "b718e630511ba765f6c4298f30385e646b51fb003f0274164824a79fbb005514"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/Determinant.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/Determinant.h",
+      "source_sha256": "123f081581c38e07a204cf0cb28a220a96d93051fc7c00c8d19b9a186fc2fb27",
+      "imported_sha256": "123f081581c38e07a204cf0cb28a220a96d93051fc7c00c8d19b9a186fc2fb27"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/FullPivLU.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/FullPivLU.h",
+      "source_sha256": "702ed2ee3e70425633198292e989cf308559e64fda172284daf475519312a471",
+      "imported_sha256": "702ed2ee3e70425633198292e989cf308559e64fda172284daf475519312a471"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/InverseImpl.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/InverseImpl.h",
+      "source_sha256": "61c32ebf15d645a38a24981fe98cc02fa51a9e15bbb15030832c963926a155e4",
+      "imported_sha256": "61c32ebf15d645a38a24981fe98cc02fa51a9e15bbb15030832c963926a155e4"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/PartialPivLU.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/PartialPivLU.h",
+      "source_sha256": "2dbea49a53a0ecc035f167804008f4cb4652e49fa1899fa4888cd7d1f6c0a64b",
+      "imported_sha256": "2dbea49a53a0ecc035f167804008f4cb4652e49fa1899fa4888cd7d1f6c0a64b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/PartialPivLU_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/PartialPivLU_LAPACKE.h",
+      "source_sha256": "e34e5e8934c5c1a591ca3eafd1a7045898c404a95b93eeb374466a1278c44625",
+      "imported_sha256": "e34e5e8934c5c1a591ca3eafd1a7045898c404a95b93eeb374466a1278c44625"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/LU/arch/InverseSize4.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/LU/arch/InverseSize4.h",
+      "source_sha256": "8c4a357bce437b540a2b9829481df051c8879ef9abe10812e184e10cd2203502",
+      "imported_sha256": "8c4a357bce437b540a2b9829481df051c8879ef9abe10812e184e10cd2203502"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/MetisSupport/MetisSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/MetisSupport/MetisSupport.h",
+      "source_sha256": "c7b5f60a7baf958a7a0b46bf484518b9e49d56bc98ef8965c5433bd7c64f264f",
+      "imported_sha256": "c7b5f60a7baf958a7a0b46bf484518b9e49d56bc98ef8965c5433bd7c64f264f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/OrderingMethods/Amd.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/OrderingMethods/Amd.h",
+      "source_sha256": "73b83bbbfefd50d0ccc1086a2cb17e8a8e9df38dee64cef310190bf81acd319c",
+      "imported_sha256": "73b83bbbfefd50d0ccc1086a2cb17e8a8e9df38dee64cef310190bf81acd319c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/OrderingMethods/Eigen_Colamd.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/OrderingMethods/Eigen_Colamd.h",
+      "source_sha256": "68655daf6bae480b8e9f2c24d3a3b1e624702f15ac1e8c481ee3a9ba260980eb",
+      "imported_sha256": "68655daf6bae480b8e9f2c24d3a3b1e624702f15ac1e8c481ee3a9ba260980eb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/OrderingMethods/Ordering.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/OrderingMethods/Ordering.h",
+      "source_sha256": "cd068f665a798696c534a9b1450c78db323a63713db936bb75db79b4fff52c93",
+      "imported_sha256": "cd068f665a798696c534a9b1450c78db323a63713db936bb75db79b4fff52c93"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/PaStiXSupport/PaStiXSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/PaStiXSupport/PaStiXSupport.h",
+      "source_sha256": "82e23d321598e464e3ad85c7596448ea65db51f681db7a28344813337e5f2ef0",
+      "imported_sha256": "82e23d321598e464e3ad85c7596448ea65db51f681db7a28344813337e5f2ef0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/PardisoSupport/PardisoSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/PardisoSupport/PardisoSupport.h",
+      "source_sha256": "c2c56429248b33f3f24faa24904fbaf0263e8bdbb0e4940af89ff8f5be772b4c",
+      "imported_sha256": "c2c56429248b33f3f24faa24904fbaf0263e8bdbb0e4940af89ff8f5be772b4c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/ColPivHouseholderQR.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/ColPivHouseholderQR.h",
+      "source_sha256": "191a654a935f1fdbb58468fe50eff4012ac9b2a530d57f3bdf31f295ff7c32c8",
+      "imported_sha256": "191a654a935f1fdbb58468fe50eff4012ac9b2a530d57f3bdf31f295ff7c32c8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h",
+      "source_sha256": "3e0e20fee012834d4652f2aff391d9d7499c2c86f64ec0407bc4f150853331bb",
+      "imported_sha256": "3e0e20fee012834d4652f2aff391d9d7499c2c86f64ec0407bc4f150853331bb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/CompleteOrthogonalDecomposition.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/CompleteOrthogonalDecomposition.h",
+      "source_sha256": "2bcd1741daadb7b1ad68eeadad27bd77ee92bf017f7666244caf9a8a9d343fd6",
+      "imported_sha256": "2bcd1741daadb7b1ad68eeadad27bd77ee92bf017f7666244caf9a8a9d343fd6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/FullPivHouseholderQR.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/FullPivHouseholderQR.h",
+      "source_sha256": "d263bac11d8ecf82e43beeb77628b1b62e6646913094ad63e894295d38e49e1e",
+      "imported_sha256": "d263bac11d8ecf82e43beeb77628b1b62e6646913094ad63e894295d38e49e1e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/HouseholderQR.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/HouseholderQR.h",
+      "source_sha256": "6ee0d450a2a447b1adb86e7d9c69a764e1cfb8f39f9d6a99fa89a162aedeeedf",
+      "imported_sha256": "6ee0d450a2a447b1adb86e7d9c69a764e1cfb8f39f9d6a99fa89a162aedeeedf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/QR/HouseholderQR_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/QR/HouseholderQR_LAPACKE.h",
+      "source_sha256": "8a8486145c909c2108aaf1bbd5b448f91c0bb2553070da5e4e1b38661b76aa87",
+      "imported_sha256": "8a8486145c909c2108aaf1bbd5b448f91c0bb2553070da5e4e1b38661b76aa87"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SPQRSupport/SuiteSparseQRSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SPQRSupport/SuiteSparseQRSupport.h",
+      "source_sha256": "68145b7331a5b821425b4cface3f953efddf3e7b1e192e58fcb5ad0933efba01",
+      "imported_sha256": "68145b7331a5b821425b4cface3f953efddf3e7b1e192e58fcb5ad0933efba01"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SVD/BDCSVD.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SVD/BDCSVD.h",
+      "source_sha256": "fd6e4b1d4a5383ba44e3c8c20aaa197fa25b193b94050efac781049273fd12bf",
+      "imported_sha256": "fd6e4b1d4a5383ba44e3c8c20aaa197fa25b193b94050efac781049273fd12bf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SVD/JacobiSVD.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SVD/JacobiSVD.h",
+      "source_sha256": "8409c413f2193d51ea9669c2f0b7d280319da95265a35c323fabc65f8a407108",
+      "imported_sha256": "8409c413f2193d51ea9669c2f0b7d280319da95265a35c323fabc65f8a407108"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SVD/JacobiSVD_LAPACKE.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SVD/JacobiSVD_LAPACKE.h",
+      "source_sha256": "91aeb6dcd05f0eb685d7171ae98f953599493d651c3eec3b0c8df90e59d22e9a",
+      "imported_sha256": "91aeb6dcd05f0eb685d7171ae98f953599493d651c3eec3b0c8df90e59d22e9a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SVD/SVDBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SVD/SVDBase.h",
+      "source_sha256": "ec1658c7f805aac8a2621a1b1e63fa84a8fed21c7f24e176ec862a945562300a",
+      "imported_sha256": "ec1658c7f805aac8a2621a1b1e63fa84a8fed21c7f24e176ec862a945562300a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SVD/UpperBidiagonalization.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SVD/UpperBidiagonalization.h",
+      "source_sha256": "e88a6624218c9b6933ce125e2c03d036df9c4a67439be51c78e9b940d0d21f5f",
+      "imported_sha256": "e88a6624218c9b6933ce125e2c03d036df9c4a67439be51c78e9b940d0d21f5f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCholesky/SimplicialCholesky.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCholesky/SimplicialCholesky.h",
+      "source_sha256": "a09cf71c03a05bd9df970ef39e4cbdeda3ff489cfb4bdbf084e85e9567d77bf0",
+      "imported_sha256": "a09cf71c03a05bd9df970ef39e4cbdeda3ff489cfb4bdbf084e85e9567d77bf0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h",
+      "source_sha256": "7457696be14e26568e8abc32f4c65a76c9cc8deb2feefc07a57595932e5b48f3",
+      "imported_sha256": "7457696be14e26568e8abc32f4c65a76c9cc8deb2feefc07a57595932e5b48f3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/AmbiVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/AmbiVector.h",
+      "source_sha256": "e6b6ce53a2e6ba872e6df9439691c95be2d5f116cb56de763f194dc000fedb84",
+      "imported_sha256": "e6b6ce53a2e6ba872e6df9439691c95be2d5f116cb56de763f194dc000fedb84"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/CompressedStorage.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/CompressedStorage.h",
+      "source_sha256": "29bb2668e1022d7fbf742af0e25e4e1fca9262d85c365e75947114ace00495f5",
+      "imported_sha256": "29bb2668e1022d7fbf742af0e25e4e1fca9262d85c365e75947114ace00495f5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h",
+      "source_sha256": "3524c2d34cb5a5e3c4db2d7535a5a22a457e719ee2403bb80f4b907655f5688e",
+      "imported_sha256": "3524c2d34cb5a5e3c4db2d7535a5a22a457e719ee2403bb80f4b907655f5688e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/MappedSparseMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/MappedSparseMatrix.h",
+      "source_sha256": "2ea4abaa6fc437a2974174c5204c6bdb0e40cc6b59dfd33bd020d9c2dd660eda",
+      "imported_sha256": "2ea4abaa6fc437a2974174c5204c6bdb0e40cc6b59dfd33bd020d9c2dd660eda"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseAssign.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseAssign.h",
+      "source_sha256": "57dfc1270120b32e37def64f69990d733ed51da52dc45b72f03ac6db2ec16f2d",
+      "imported_sha256": "57dfc1270120b32e37def64f69990d733ed51da52dc45b72f03ac6db2ec16f2d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseBlock.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseBlock.h",
+      "source_sha256": "07f468bbf114d435ec9da04d6ca0b940f1fd7d63b62548c7f9d8130550b42451",
+      "imported_sha256": "07f468bbf114d435ec9da04d6ca0b940f1fd7d63b62548c7f9d8130550b42451"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseColEtree.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseColEtree.h",
+      "source_sha256": "871be15fce8853900437445ee4913bba0c9c3d6af08e6313f3deb9cb916e9344",
+      "imported_sha256": "871be15fce8853900437445ee4913bba0c9c3d6af08e6313f3deb9cb916e9344"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseCompressedBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseCompressedBase.h",
+      "source_sha256": "8bf4030149985e1fe8fe8afc3a873af8e1f0ce5f3c3c52232b580ad6e4f110d7",
+      "imported_sha256": "8bf4030149985e1fe8fe8afc3a873af8e1f0ce5f3c3c52232b580ad6e4f110d7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseCwiseBinaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseCwiseBinaryOp.h",
+      "source_sha256": "50cf08b13aa7a8e215bdc54f34c23be25906bb44c2edcd7edce1c3e04d3453b5",
+      "imported_sha256": "50cf08b13aa7a8e215bdc54f34c23be25906bb44c2edcd7edce1c3e04d3453b5"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseCwiseUnaryOp.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseCwiseUnaryOp.h",
+      "source_sha256": "1adefb0d699b143db5fb6b609b75021c3141def16a834ed9ccf3a62b5b18754f",
+      "imported_sha256": "1adefb0d699b143db5fb6b609b75021c3141def16a834ed9ccf3a62b5b18754f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseDenseProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseDenseProduct.h",
+      "source_sha256": "4be488722a9e43c0aad1e4678ddc0ed16fa7253756ac9f5c0d2c94a532839f04",
+      "imported_sha256": "4be488722a9e43c0aad1e4678ddc0ed16fa7253756ac9f5c0d2c94a532839f04"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseDiagonalProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseDiagonalProduct.h",
+      "source_sha256": "aa5d600eb466743c6ead15ca60ab77e79f15579eabc24920dfdab5ae6363519f",
+      "imported_sha256": "aa5d600eb466743c6ead15ca60ab77e79f15579eabc24920dfdab5ae6363519f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseDot.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseDot.h",
+      "source_sha256": "a8d305b52c1dc6e66b2402dfb6ec1cd54967f1d5cf1e7ecef81e876277d78767",
+      "imported_sha256": "a8d305b52c1dc6e66b2402dfb6ec1cd54967f1d5cf1e7ecef81e876277d78767"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseFuzzy.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseFuzzy.h",
+      "source_sha256": "f87bcc4641b02eea1e015454cda4f124e65eacad4b2a817bcc88549edce91370",
+      "imported_sha256": "f87bcc4641b02eea1e015454cda4f124e65eacad4b2a817bcc88549edce91370"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseMap.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseMap.h",
+      "source_sha256": "2c43629c60e0ccffb47d22f17bd202d909931a9bf0ebe5a6619a2ecbdf061fa0",
+      "imported_sha256": "2c43629c60e0ccffb47d22f17bd202d909931a9bf0ebe5a6619a2ecbdf061fa0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseMatrix.h",
+      "source_sha256": "51a85c9f28e393d7a7ab5694be59ea235779cc17874aff2b1c38d5afc04ab9fb",
+      "imported_sha256": "51a85c9f28e393d7a7ab5694be59ea235779cc17874aff2b1c38d5afc04ab9fb"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseMatrixBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseMatrixBase.h",
+      "source_sha256": "bcab93293b4e63a50002881a13bc9548f125bda9c10aa241e2883907b908db58",
+      "imported_sha256": "bcab93293b4e63a50002881a13bc9548f125bda9c10aa241e2883907b908db58"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparsePermutation.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparsePermutation.h",
+      "source_sha256": "30e0a30a0418db9a58b4f31086f1af91193c9285ae18ef1d93441132a4ad88cf",
+      "imported_sha256": "30e0a30a0418db9a58b4f31086f1af91193c9285ae18ef1d93441132a4ad88cf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseProduct.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseProduct.h",
+      "source_sha256": "5cbdbbf2c0ebb1c9b91f50a56ccc96b69f73305f8aa0cfaf79c77e7d7126659d",
+      "imported_sha256": "5cbdbbf2c0ebb1c9b91f50a56ccc96b69f73305f8aa0cfaf79c77e7d7126659d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseRedux.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseRedux.h",
+      "source_sha256": "f3e68290cad5fbbba0ecf8284fa238a52072108e3368c0632f8c90816b41dc91",
+      "imported_sha256": "f3e68290cad5fbbba0ecf8284fa238a52072108e3368c0632f8c90816b41dc91"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseRef.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseRef.h",
+      "source_sha256": "2a9584cb3f8148342bda3905638d6aa65f35935c686ddd3d32ba097807adf740",
+      "imported_sha256": "2a9584cb3f8148342bda3905638d6aa65f35935c686ddd3d32ba097807adf740"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseSelfAdjointView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseSelfAdjointView.h",
+      "source_sha256": "a4a31af4749955fe130eb4acdd640f1e6f35fb2bd858dfd7dd06c31976610a1b",
+      "imported_sha256": "a4a31af4749955fe130eb4acdd640f1e6f35fb2bd858dfd7dd06c31976610a1b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseSolverBase.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseSolverBase.h",
+      "source_sha256": "fc525e230bdb66f4ba4d79d02386ea716d3b01eba5b734533a171f043a20a479",
+      "imported_sha256": "fc525e230bdb66f4ba4d79d02386ea716d3b01eba5b734533a171f043a20a479"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseSparseProductWithPruning.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseSparseProductWithPruning.h",
+      "source_sha256": "a09f7932bf0fa3106555cbb2224f37c409c0f41f014c5f122c516bf092f331c8",
+      "imported_sha256": "a09f7932bf0fa3106555cbb2224f37c409c0f41f014c5f122c516bf092f331c8"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseTranspose.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseTranspose.h",
+      "source_sha256": "bf3180918315deb7dc433fa0d4f388d7a4209fa430783cc9d80373ab88bfd72e",
+      "imported_sha256": "bf3180918315deb7dc433fa0d4f388d7a4209fa430783cc9d80373ab88bfd72e"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseTriangularView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseTriangularView.h",
+      "source_sha256": "c0bce29b40b11481ed84f3e77fe0444e7788c43a6be68b3b58c9a6db6221a6cf",
+      "imported_sha256": "c0bce29b40b11481ed84f3e77fe0444e7788c43a6be68b3b58c9a6db6221a6cf"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseUtil.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseUtil.h",
+      "source_sha256": "41b25d1cb05756294f1cc611949529bb6e362185c2ca58ee45653a1a0d021f21",
+      "imported_sha256": "41b25d1cb05756294f1cc611949529bb6e362185c2ca58ee45653a1a0d021f21"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseVector.h",
+      "source_sha256": "1574760419588cdef8fd8ec71adff12b5e2a198f7796664e2e2ec5119356e21f",
+      "imported_sha256": "1574760419588cdef8fd8ec71adff12b5e2a198f7796664e2e2ec5119356e21f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/SparseView.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/SparseView.h",
+      "source_sha256": "b6ded852f6d8ab8142ee8f0e8cc44013910d300c838018c9430db77e41712982",
+      "imported_sha256": "b6ded852f6d8ab8142ee8f0e8cc44013910d300c838018c9430db77e41712982"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseCore/TriangularSolver.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseCore/TriangularSolver.h",
+      "source_sha256": "e9caf168bfdea718fa900283448395de5791b237683df10caf0b453cf4ed314f",
+      "imported_sha256": "e9caf168bfdea718fa900283448395de5791b237683df10caf0b453cf4ed314f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU.h",
+      "source_sha256": "d23afc1552ea6d7958792a10149080f33f56a75814663fab33ff19cfb0dde053",
+      "imported_sha256": "d23afc1552ea6d7958792a10149080f33f56a75814663fab33ff19cfb0dde053"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLUImpl.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLUImpl.h",
+      "source_sha256": "c6a155332ca1b7894e00f3f7ea5cfe38b4ca0cb2d5e3f69b025c40137e7c0e40",
+      "imported_sha256": "c6a155332ca1b7894e00f3f7ea5cfe38b4ca0cb2d5e3f69b025c40137e7c0e40"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Memory.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Memory.h",
+      "source_sha256": "d11b69a99c2fd957a86272f513fd96e7965ff90f062417c21962a725548c34aa",
+      "imported_sha256": "d11b69a99c2fd957a86272f513fd96e7965ff90f062417c21962a725548c34aa"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Structs.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Structs.h",
+      "source_sha256": "8a204a6a9409586135ff5218420dc6e1389fcdae1cfe072750fd4478a8394614",
+      "imported_sha256": "8a204a6a9409586135ff5218420dc6e1389fcdae1cfe072750fd4478a8394614"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h",
+      "source_sha256": "5c4b0609b55b46e37b9f77eb2f0ac6ba9586f6f2a19181c1cc55666d8e957e5a",
+      "imported_sha256": "5c4b0609b55b46e37b9f77eb2f0ac6ba9586f6f2a19181c1cc55666d8e957e5a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Utils.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_Utils.h",
+      "source_sha256": "55f6cb16d53c850699977b228d2b3428a2753a4e1e1f4919c1f4a5003d427210",
+      "imported_sha256": "55f6cb16d53c850699977b228d2b3428a2753a4e1e1f4919c1f4a5003d427210"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_column_bmod.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_column_bmod.h",
+      "source_sha256": "504173ccf9d9a0cbe9feaee1c9a34968c41a8af9ee28681f53c38c70b918f44a",
+      "imported_sha256": "504173ccf9d9a0cbe9feaee1c9a34968c41a8af9ee28681f53c38c70b918f44a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_column_dfs.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_column_dfs.h",
+      "source_sha256": "ff5ba498aa4288fc6a2c73ffb16ef0c091747f9f0b3732666f5d9d97576e3b77",
+      "imported_sha256": "ff5ba498aa4288fc6a2c73ffb16ef0c091747f9f0b3732666f5d9d97576e3b77"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h",
+      "source_sha256": "c6e7a3007e53f7bde5668c57adf4df64cae9e5dfc6596384533792b2a45a1639",
+      "imported_sha256": "c6e7a3007e53f7bde5668c57adf4df64cae9e5dfc6596384533792b2a45a1639"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_gemm_kernel.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_gemm_kernel.h",
+      "source_sha256": "134ca932dcb40ad27d8f28900256ec06b51d814dedd481e12d7a2aff6f643fa2",
+      "imported_sha256": "134ca932dcb40ad27d8f28900256ec06b51d814dedd481e12d7a2aff6f643fa2"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h",
+      "source_sha256": "e87e76a8d5b5f4e4c081a1800ac7154b7d2bf5966392d1d8cd2e1a108c453cb9",
+      "imported_sha256": "e87e76a8d5b5f4e4c081a1800ac7154b7d2bf5966392d1d8cd2e1a108c453cb9"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_kernel_bmod.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_kernel_bmod.h",
+      "source_sha256": "c2c4d8f589e9134eb8669fada7bf6f86c9f7d65795e2b9079955648d06955825",
+      "imported_sha256": "c2c4d8f589e9134eb8669fada7bf6f86c9f7d65795e2b9079955648d06955825"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_panel_bmod.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_panel_bmod.h",
+      "source_sha256": "13464c3e6539f5036bc592c114341a7d9a5b5b7d3276ecf060826ec78d7d035d",
+      "imported_sha256": "13464c3e6539f5036bc592c114341a7d9a5b5b7d3276ecf060826ec78d7d035d"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_panel_dfs.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_panel_dfs.h",
+      "source_sha256": "1c7c706c25786c3783570a3a3e5efb8e14e70950229c2435d26da8ce2d3fc43c",
+      "imported_sha256": "1c7c706c25786c3783570a3a3e5efb8e14e70950229c2435d26da8ce2d3fc43c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_pivotL.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_pivotL.h",
+      "source_sha256": "5ad1a6b28183f605213c8987d9fe15dd17d57876dbc958210ec3ed0213306c5b",
+      "imported_sha256": "5ad1a6b28183f605213c8987d9fe15dd17d57876dbc958210ec3ed0213306c5b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_pruneL.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_pruneL.h",
+      "source_sha256": "c5b9134a43ba6361061875b2f331c355b1203942639bf6d02db1d5ece3a159bc",
+      "imported_sha256": "c5b9134a43ba6361061875b2f331c355b1203942639bf6d02db1d5ece3a159bc"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_relax_snode.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseLU/SparseLU_relax_snode.h",
+      "source_sha256": "c665a42771eb09e631fe8d9bed5d4db53c28b2482df381739a0e4e1cee1924d6",
+      "imported_sha256": "c665a42771eb09e631fe8d9bed5d4db53c28b2482df381739a0e4e1cee1924d6"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SparseQR/SparseQR.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SparseQR/SparseQR.h",
+      "source_sha256": "6fb9085f495fb163845ec7058ef89a50e28c9227859c69cf7641cd3880b4ee6b",
+      "imported_sha256": "6fb9085f495fb163845ec7058ef89a50e28c9227859c69cf7641cd3880b4ee6b"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/StlSupport/StdDeque.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/StlSupport/StdDeque.h",
+      "source_sha256": "9f070bc41ce79c22be5d7215ccb8fa9b74c4f6f35fea1081e6b13056094432d0",
+      "imported_sha256": "9f070bc41ce79c22be5d7215ccb8fa9b74c4f6f35fea1081e6b13056094432d0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/StlSupport/StdList.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/StlSupport/StdList.h",
+      "source_sha256": "fcfa0ff498e9331147c91b7689eac3d3b90a630e5809a43e9b6b9f7fff5bbfd0",
+      "imported_sha256": "fcfa0ff498e9331147c91b7689eac3d3b90a630e5809a43e9b6b9f7fff5bbfd0"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/StlSupport/StdVector.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/StlSupport/StdVector.h",
+      "source_sha256": "64c1533368abc7e66b98d0cc2180b2a11456bdf35d69bd7c5d754ded66208788",
+      "imported_sha256": "64c1533368abc7e66b98d0cc2180b2a11456bdf35d69bd7c5d754ded66208788"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/StlSupport/details.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/StlSupport/details.h",
+      "source_sha256": "3785c06753150648f95aaa9fd29babcf0f01376a0132a91e9cfc820bb6541781",
+      "imported_sha256": "3785c06753150648f95aaa9fd29babcf0f01376a0132a91e9cfc820bb6541781"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/SuperLUSupport/SuperLUSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/SuperLUSupport/SuperLUSupport.h",
+      "source_sha256": "c269eba6730543628a819276619d2c1b0b6739159f341eb3571ef257ffa62333",
+      "imported_sha256": "c269eba6730543628a819276619d2c1b0b6739159f341eb3571ef257ffa62333"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/UmfPackSupport/UmfPackSupport.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/UmfPackSupport/UmfPackSupport.h",
+      "source_sha256": "b68ea08ecb59deeec50370c111e91ccd233050fe629d8f54a124727923feea76",
+      "imported_sha256": "b68ea08ecb59deeec50370c111e91ccd233050fe629d8f54a124727923feea76"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/Image.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/Image.h",
+      "source_sha256": "f8f9fb664c1462056175f956d9377bedd150e8c45fb89a39ef4463b63686c4a1",
+      "imported_sha256": "f8f9fb664c1462056175f956d9377bedd150e8c45fb89a39ef4463b63686c4a1"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/Kernel.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/Kernel.h",
+      "source_sha256": "2088910ed3d2fd24df3d2f7cd3164bc8457c782a8e0058b7f4adf228a1d3eeba",
+      "imported_sha256": "2088910ed3d2fd24df3d2f7cd3164bc8457c782a8e0058b7f4adf228a1d3eeba"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/RealSvd2x2.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/RealSvd2x2.h",
+      "source_sha256": "5fe0795f45cd92a09b48c02259ef743bacbbe86f890cb0c0725c0c03fb56886a",
+      "imported_sha256": "5fe0795f45cd92a09b48c02259ef743bacbbe86f890cb0c0725c0c03fb56886a"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/blas.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/blas.h",
+      "source_sha256": "74e5a8752672edadd93637f6dc7feb8a50427ea94f9ac5d1ed56dc2dae0fad67",
+      "imported_sha256": "74e5a8752672edadd93637f6dc7feb8a50427ea94f9ac5d1ed56dc2dae0fad67"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/lapack.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/lapack.h",
+      "source_sha256": "ffdfe0aa46cb3221202a9f2582e39ecf6d5ad66626cdfd70f409859521d68346",
+      "imported_sha256": "ffdfe0aa46cb3221202a9f2582e39ecf6d5ad66626cdfd70f409859521d68346"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/lapacke.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/lapacke.h",
+      "source_sha256": "06673e96af65b907c83d42495b754361b42bdbf9efc6353d51f2e702396caeb7",
+      "imported_sha256": "06673e96af65b907c83d42495b754361b42bdbf9efc6353d51f2e702396caeb7"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/misc/lapacke_mangling.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/misc/lapacke_mangling.h",
+      "source_sha256": "7d71fdee53a1e0cd01568aba2f152f2e1e4fbb849e84d740e3b031e819fbfa22",
+      "imported_sha256": "7d71fdee53a1e0cd01568aba2f152f2e1e4fbb849e84d740e3b031e819fbfa22"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/ArrayCwiseBinaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/ArrayCwiseBinaryOps.h",
+      "source_sha256": "dc9ebce46c9243ec3d013746ff25392b6fde9e87eb3c1063858cc16875c19d49",
+      "imported_sha256": "dc9ebce46c9243ec3d013746ff25392b6fde9e87eb3c1063858cc16875c19d49"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/ArrayCwiseUnaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/ArrayCwiseUnaryOps.h",
+      "source_sha256": "2f0f0334476bad09adaf5ba3eb8c2528c2b6ab3ae47210832cbd276388513f4c",
+      "imported_sha256": "2f0f0334476bad09adaf5ba3eb8c2528c2b6ab3ae47210832cbd276388513f4c"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/BlockMethods.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/BlockMethods.h",
+      "source_sha256": "54fe460d2f69168b0db431756e96b4a5467dbaaa426acdc21b87a507a7c26b0f",
+      "imported_sha256": "54fe460d2f69168b0db431756e96b4a5467dbaaa426acdc21b87a507a7c26b0f"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/CommonCwiseBinaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/CommonCwiseBinaryOps.h",
+      "source_sha256": "1f8a9bec47fcd5f7f529d5956e15da2d0d32511879bdf613d39fb22fbc9b4498",
+      "imported_sha256": "1f8a9bec47fcd5f7f529d5956e15da2d0d32511879bdf613d39fb22fbc9b4498"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/CommonCwiseUnaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/CommonCwiseUnaryOps.h",
+      "source_sha256": "2a8ba7687292c6b301ccfeec51c51275210b3744218c2497b1865b5370d83256",
+      "imported_sha256": "2a8ba7687292c6b301ccfeec51c51275210b3744218c2497b1865b5370d83256"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/IndexedViewMethods.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/IndexedViewMethods.h",
+      "source_sha256": "5e9583f2c6105e3bf013ddc1afe2a0685b4aba060ef6110446e9379754046548",
+      "imported_sha256": "5e9583f2c6105e3bf013ddc1afe2a0685b4aba060ef6110446e9379754046548"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/MatrixCwiseBinaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/MatrixCwiseBinaryOps.h",
+      "source_sha256": "90ea8491924c90080397fb1e3f33d0e1a842f5a3b80b99fc52a20651958c6982",
+      "imported_sha256": "90ea8491924c90080397fb1e3f33d0e1a842f5a3b80b99fc52a20651958c6982"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/MatrixCwiseUnaryOps.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/MatrixCwiseUnaryOps.h",
+      "source_sha256": "8410b62cad9a1ed8be0ea7a5b1f1821b0e7330cc6a6858c8c9dfc327e49dd7b3",
+      "imported_sha256": "8410b62cad9a1ed8be0ea7a5b1f1821b0e7330cc6a6858c8c9dfc327e49dd7b3"
+    },
+    {
+      "source": "include/rabitqlib/third/Eigen/src/plugins/ReshapedMethods.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/Eigen/src/plugins/ReshapedMethods.h",
+      "source_sha256": "398c8eff2a19dd32fb5fc185ac85be20aceab3fd4b6ccd0cf7a1c9c990153a2f",
+      "imported_sha256": "398c8eff2a19dd32fb5fc185ac85be20aceab3fd4b6ccd0cf7a1c9c990153a2f"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/LICENSE",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/LICENSE",
+      "source_sha256": "3f41ba9a7eb72cf3f5c0113a6f89a1bdb539e1a4b414a63bce266d2013aad987",
+      "imported_sha256": "3f41ba9a7eb72cf3f5c0113a6f89a1bdb539e1a4b414a63bce266d2013aad987"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/bruteforce.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/bruteforce.h",
+      "source_sha256": "da1f179e99d8e5a4c39b5db0c681bccf3c63e797aaa4982620519f8e001cb2c6",
+      "imported_sha256": "da1f179e99d8e5a4c39b5db0c681bccf3c63e797aaa4982620519f8e001cb2c6"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/hnswalg.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/hnswalg.h",
+      "source_sha256": "c6b934d1fa91143c18417af45fd284515802a901d9e4c93224912e03cc9d3e87",
+      "imported_sha256": "c6b934d1fa91143c18417af45fd284515802a901d9e4c93224912e03cc9d3e87"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/hnswlib.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/hnswlib.h",
+      "source_sha256": "3a8a1fb5f81d8d698da31f6111c38d8d304a108aa2025050f4e589c416e575bc",
+      "imported_sha256": "3a8a1fb5f81d8d698da31f6111c38d8d304a108aa2025050f4e589c416e575bc"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/space_ip.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/space_ip.h",
+      "source_sha256": "eb484b4c894e3a288d41f9d7778346c1b74523600fa40e79aa076e2d33cfa675",
+      "imported_sha256": "eb484b4c894e3a288d41f9d7778346c1b74523600fa40e79aa076e2d33cfa675"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/space_l2.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/space_l2.h",
+      "source_sha256": "c599d024657896412250b4fde1a95e39f8bc55cccd263f36c8948fa35779edf1",
+      "imported_sha256": "c599d024657896412250b4fde1a95e39f8bc55cccd263f36c8948fa35779edf1"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/stop_condition.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/stop_condition.h",
+      "source_sha256": "930da73eead77dff0c8c9f3281c5d12250051c90ef98fcfbab8f5f307bdae8d9",
+      "imported_sha256": "930da73eead77dff0c8c9f3281c5d12250051c90ef98fcfbab8f5f307bdae8d9"
+    },
+    {
+      "source": "include/rabitqlib/third/hnswlib/visited_list_pool.h",
+      "destination": "third_party/rabitq/include/rabitqlib/third/hnswlib/visited_list_pool.h",
+      "source_sha256": "8e5bab8d12b5ef26e3b603b656b8a1acba6738498d1d98f44c9fdb1cb0e25110",
+      "imported_sha256": "8e5bab8d12b5ef26e3b603b656b8a1acba6738498d1d98f44c9fdb1cb0e25110"
+    },
+    {
+      "source": "include/rabitqlib/utils/array.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/array.hpp",
+      "source_sha256": "d059af16f1514c04e07c33450af128caa74f59cf79965b4f83afb373425e5126",
+      "imported_sha256": "d059af16f1514c04e07c33450af128caa74f59cf79965b4f83afb373425e5126"
+    },
+    {
+      "source": "include/rabitqlib/utils/buffer.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/buffer.hpp",
+      "source_sha256": "4e5a580ecd53a7099eca5ba823e8295549de2b990f774f8e11cad86a859749c0",
+      "imported_sha256": "4e5a580ecd53a7099eca5ba823e8295549de2b990f774f8e11cad86a859749c0"
+    },
+    {
+      "source": "include/rabitqlib/utils/fht_avx.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/fht_avx.hpp",
+      "source_sha256": "59f8858919e93d52c1c09efa7b7d5caf920f135a991d0c6d6b9c60753fd41f27",
+      "imported_sha256": "59f8858919e93d52c1c09efa7b7d5caf920f135a991d0c6d6b9c60753fd41f27"
+    },
+    {
+      "source": "include/rabitqlib/utils/hashset.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/hashset.hpp",
+      "source_sha256": "764b5a40890f96442cd902758a2fa73236b45ce75a6b9713a4f9446be462a980",
+      "imported_sha256": "764b5a40890f96442cd902758a2fa73236b45ce75a6b9713a4f9446be462a980"
+    },
+    {
+      "source": "include/rabitqlib/utils/io.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/io.hpp",
+      "source_sha256": "37f3a78ca0e4cb235399b41c966a1cd36cf90782432f64e4ed443eeaf5d80cf9",
+      "imported_sha256": "37f3a78ca0e4cb235399b41c966a1cd36cf90782432f64e4ed443eeaf5d80cf9"
+    },
+    {
+      "source": "include/rabitqlib/utils/memory.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/memory.hpp",
+      "source_sha256": "fa5175504db77dbb53af9f5499189b50c14ee71957d07dbdc54456c140b9bb44",
+      "imported_sha256": "fa5175504db77dbb53af9f5499189b50c14ee71957d07dbdc54456c140b9bb44"
+    },
+    {
+      "source": "include/rabitqlib/utils/rotator.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/rotator.hpp",
+      "source_sha256": "1ee4f45af0bc60e4cba238515232307d27cbb3f2c87eca1f1f391ff39c42b791",
+      "imported_sha256": "1ee4f45af0bc60e4cba238515232307d27cbb3f2c87eca1f1f391ff39c42b791"
+    },
+    {
+      "source": "include/rabitqlib/utils/space.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/space.hpp",
+      "source_sha256": "8662c339fd833f65a6e76cf23283ab651b83537dfc05221d17f2bd6884de9f90",
+      "imported_sha256": "8662c339fd833f65a6e76cf23283ab651b83537dfc05221d17f2bd6884de9f90"
+    },
+    {
+      "source": "include/rabitqlib/utils/stopw.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/stopw.hpp",
+      "source_sha256": "322e81045ec22734a61c33936ba9f9698286d4ef138c1dacb42e1c9b31e70ecb",
+      "imported_sha256": "322e81045ec22734a61c33936ba9f9698286d4ef138c1dacb42e1c9b31e70ecb"
+    },
+    {
+      "source": "include/rabitqlib/utils/tools.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/tools.hpp",
+      "source_sha256": "16e7f2e1ec981fb13f9bbf3e4a5c7538a1de52c41106baa92fe158532e3a7e45",
+      "imported_sha256": "16e7f2e1ec981fb13f9bbf3e4a5c7538a1de52c41106baa92fe158532e3a7e45"
+    },
+    {
+      "source": "include/rabitqlib/utils/visited_pool.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/visited_pool.hpp",
+      "source_sha256": "67c6598817444869cef7357b56a139db7767b572ea2637c1adfebc83b9c05020",
+      "imported_sha256": "67c6598817444869cef7357b56a139db7767b572ea2637c1adfebc83b9c05020"
+    },
+    {
+      "source": "include/rabitqlib/utils/warmup_space.hpp",
+      "destination": "third_party/rabitq/include/rabitqlib/utils/warmup_space.hpp",
+      "source_sha256": "9a51331495e02366765488262c44dfd1990489f9a918b5b51a443b62c3fc5dd8",
+      "imported_sha256": "9a51331495e02366765488262c44dfd1990489f9a918b5b51a443b62c3fc5dd8"
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu_cpu.cuh",
+      "destination": "include/coraanns/search/hybrid.cuh",
+      "source_sha256": "77f3eb37bcc71f82f785909b3d6ecb22ffd1218151613b046a73ab578f7b9fcb",
+      "imported_sha256": "592ccfe181b31eac03960918d14630ee6aae7309286094f93c659fe6735152ea",
+      "compare_cpp_tokens": true,
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu.cuh",
+      "destination": "include/coraanns/baselines/gpu.cuh",
+      "source_sha256": "df471d85f68d2cdf986808bdb0a547e858e6020f9f2b8693a15fc4a396b18007",
+      "imported_sha256": "df471d85f68d2cdf986808bdb0a547e858e6020f9f2b8693a15fc4a396b18007",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_cpu_gpu.cuh",
+      "destination": "include/coraanns/experimental/cpu_gpu.cuh",
+      "source_sha256": "d04a5edd22d2e3e5eba748dc10ecb5d9dc251d276affe0176c4bcb4db4bfd7de",
+      "imported_sha256": "d04a5edd22d2e3e5eba748dc10ecb5d9dc251d276affe0176c4bcb4db4bfd7de",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu_global.cuh",
+      "destination": "include/coraanns/experimental/gpu_global.cuh",
+      "source_sha256": "17a5b2cd2af633c95fb3424651e39abeadaea9fcf7a55e0bca9367ad55765546",
+      "imported_sha256": "17a5b2cd2af633c95fb3424651e39abeadaea9fcf7a55e0bca9367ad55765546",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu_cpu_asymmetric.cuh",
+      "destination": "include/coraanns/experimental/asymmetric.cuh",
+      "source_sha256": "fc68e3b7efd6a6915044875d700cf86a060615d938073f38ea906394e105dd10",
+      "imported_sha256": "fc68e3b7efd6a6915044875d700cf86a060615d938073f38ea906394e105dd10",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu_cpu_trace_progress.cuh",
+      "destination": "include/coraanns/experimental/backlog_trace.cuh",
+      "source_sha256": "e25f5706cc6d69ae619e731af38dc8f54e095fbd95fc70caaace55c0940db6c7",
+      "imported_sha256": "e25f5706cc6d69ae619e731af38dc8f54e095fbd95fc70caaace55c0940db6c7",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_benchmark_common.hpp",
+      "destination": "include/coraanns/benchmark/options.hpp",
+      "source_sha256": "3b1f155dec9cd3bb6f63915767ef1ac323b762b901d0c9e9805909d33d64951e",
+      "imported_sha256": "3b1f155dec9cd3bb6f63915767ef1ac323b762b901d0c9e9805909d33d64951e",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_experiment_options.hpp",
+      "destination": "include/coraanns/benchmark/mechanism_options.hpp",
+      "source_sha256": "0a7907e8d2b751df333362cd9056f4cf012b06ab18872684a05ab6895ee1abe2",
+      "imported_sha256": "bf981f12aeb376430007a968338a3193e785fde4377eb7c39c5e8e5ceef93f38",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/recall_evaluator.hpp",
+      "destination": "include/coraanns/benchmark/recall.hpp",
+      "source_sha256": "97da4af59c4ca4dba8cb983b7cb1af18f17fae10dc25a5d923ec2455f98b100e",
+      "imported_sha256": "9293de37becd952ff66d5cb49c4b71d41d2c0b142171abef4e9ce1bb2ae856bf",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/graph_baseline_common.hpp",
+      "destination": "include/coraanns/benchmark/distance.hpp",
+      "source_sha256": "5302240e14f3af12520e8ab39456a3cb8200141769f8eb47924b42f6d6f1de02",
+      "imported_sha256": "5302240e14f3af12520e8ab39456a3cb8200141769f8eb47924b42f6d6f1de02",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "LICENSE",
+      "destination": "LICENSE",
+      "source_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "imported_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "source": "README.md",
+      "destination": "third_party/rabitq/UPSTREAM_README.md",
+      "source_sha256": "343ed3c4f83fefbc5ea8105b48e049f0417e14b1e839fb76ed62307120b8c810",
+      "imported_sha256": "343ed3c4f83fefbc5ea8105b48e049f0417e14b1e839fb76ed62307120b8c810"
+    },
+    {
+      "source": "LICENSE",
+      "destination": "third_party/rabitq/LICENSE",
+      "source_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "imported_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "source": "sample/ivf_rabitq_indexing.cpp",
+      "destination": "apps/build_index.cpp",
+      "source_sha256": "2505f3f0aa8b96c28a1ad965e193f2b1b39e3c3c50078034982a6b4b9ba6264d",
+      "imported_sha256": "553184a1d29b46d1061cb5e89fa2f9f2eb2b747bb14459f37e4329e91948df48",
+      "compare_cpp_tokens": true,
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "sample/ivf_rabitq_indexing_gpu.cpp",
+      "destination": "apps/build_index_gpu.cpp",
+      "source_sha256": "16318a08890b9166e565245d136799a6a51083a4af099021458e1bf9d8a2fb61",
+      "imported_sha256": "baac9716f4b7f2f1bd3b6ae11a0f87d79dc522ce4efddb19790c07cb5b2f4fee",
+      "compare_cpp_tokens": true,
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "sample/ivf_rabitq_indexing_gpu.cu",
+      "destination": "src/index/build_gpu.cu",
+      "source_sha256": "b68ce7677506d812b8b06f64bd836c373f1b37e6e65d98842f373d0dc32d3f55",
+      "imported_sha256": "b68ce7677506d812b8b06f64bd836c373f1b37e6e65d98842f373d0dc32d3f55",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_parallel.cpp",
+      "destination": "apps/baselines/cpu.cpp",
+      "source_sha256": "e4fbc2eb88d6e5b7db704e10e4c4a5f3bc6775f2ae7e2effa6adaa82d48a60c9",
+      "imported_sha256": "01d0a4b0e21cca6aa3c85f322e3be49a6cd20a489b28616f7fe6b2ae033ecb6e",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu.cpp",
+      "destination": "apps/baselines/gpu.cpp",
+      "source_sha256": "337582c31b014464d625da7164b47542d9972b60470d0a7e6a2898bede426695",
+      "imported_sha256": "fc1f5c7dac2941d6e66d2310fa9d0956e15986e959d02ffffdf7a3f6eda4318e",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu.cu",
+      "destination": "src/baselines/gpu.cu",
+      "source_sha256": "65d7b8aeda0a1aa6c91ea756b7f885bc0e43b51d3aa990f87df81c331f6d605f",
+      "imported_sha256": "26ad2d173a74d6be9a8e4c29f7f35d9792a8952dcb635fb994cd899fd5d49a8a",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu.cu",
+      "destination": "src/search/hybrid.cu",
+      "source_sha256": "b5c25e8cc56d7f628221d1723066ad578bf9d181d05180c4bdc7c76ec845aa02",
+      "imported_sha256": "4f2aaaeaa9b26023ac6223376ee9b422ac4fbe87df25d1caf5d7b3c4d0d762a8",
+      "compare_cpp_tokens": true,
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu.cpp",
+      "destination": "apps/search.cpp",
+      "source_sha256": "cc2c874a945b09eeb8860dcb566a9d0f86acc630af754beac7f0c2ebce63afcc",
+      "imported_sha256": "c5c79fcce22a47345db75f49000f8cd78e4c432578ba4abfc6e404218f6d5613",
+      "source_character_range": [
+        0,
+        28024
+      ],
+      "compare_cpp_tokens": true,
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu.cpp",
+      "destination": "src/search/cpu_refinement.cpp",
+      "source_sha256": "cc2c874a945b09eeb8860dcb566a9d0f86acc630af754beac7f0c2ebce63afcc",
+      "imported_sha256": "9d2b3d48205d9a45dc25828b14f8bd05283317fb19c1d7732df293fe670725f6",
+      "source_character_range": [
+        28024,
+        39496
+      ],
+      "compare_cpp_tokens": true,
+      "added_prefix": "#include <algorithm>\n#include <atomic>\n#include <cfloat>\n#include <cstring>\n#include <cstdlib>\n#include <immintrin.h>\n#include <iostream>\n#include <limits>\n#include <queue>\n#include <threads.h>\n#include <vector>\n#include <omp.h>\n\n#include \"rabitqlib/defines.hpp\"\n#include \"rabitqlib/utils/space.hpp\"\n#include \"rabitqlib/utils/stopw.hpp\"\n#include \"rabitqlib/utils/tools.hpp\"\n#include \"coraanns/search/hybrid.cuh\"\n\n",
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_cpu_gpu.cpp",
+      "destination": "apps/experimental/cpu_gpu.cpp",
+      "source_sha256": "159bd6b0317e13fcb1afb1f072964c78a6b4f2452dd31c8e4c77c857714e4d30",
+      "imported_sha256": "f6423e85e5e395025d3035bb06d11b0f84db37270e621aa28009743a81bf2af7",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_cpu_gpu.cu",
+      "destination": "src/experimental/cpu_gpu.cu",
+      "source_sha256": "3813397a68d7120877c4a95eb9bb8a0f9dc20412b7e9e5ff45bb50115acadca8",
+      "imported_sha256": "fcab28d1addc822f673dcd1c67c311101d1417d4beec3c8cc493df01ed59e08c",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_global.cpp",
+      "destination": "apps/experimental/gpu_global.cpp",
+      "source_sha256": "8836ce0d1a1424a31e8412c9874a2279abea131c77afc3e58b3e8ab3ee4e3cb5",
+      "imported_sha256": "5b9ce38fd487aec9427a4dc191b67f017d98ec8dd2c275bf69d35d7c9802eab5",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_global.cu",
+      "destination": "src/experimental/gpu_global.cu",
+      "source_sha256": "4327f1699c33664bb0526a1efc40a3309158772efacc9b92a78a1cf65a7f53a2",
+      "imported_sha256": "b770aee2950b0b9d1f35ccf17421798e321b80bacc647948363a41a5b113f84c",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu_asymmetric.cpp",
+      "destination": "apps/experimental/asymmetric.cpp",
+      "source_sha256": "820075545e2a0d3e1205b3f0a8125cd7b88c4647669c1719decb2499098be627",
+      "imported_sha256": "9f0d02b1b25d20ecabc65e708f9933b5cfb920a2eca78ac0b7671dbb5dd39ecd",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu_asymmetric.cu",
+      "destination": "src/experimental/asymmetric.cu",
+      "source_sha256": "1c2f3feed7816359dacd7b18ccadbef0cc9de5dac7d1a0f5a972141a9c4c0f56",
+      "imported_sha256": "ab7e15c80e990a5a21a9767485fb678ba42e05c057738ec4c626213cf7aa3c11",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu_backlog_trace.cpp",
+      "destination": "apps/experimental/backlog_trace.cpp",
+      "source_sha256": "38363b1d4b81b9eaca284b2fb7b483d9ceb5971f2170ffbcb751f0381efad5d2",
+      "imported_sha256": "6a4e82a4a9c4cd6da22842f4c92f66e4ebeb5aafda31b861347ba04a3f2e030a",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "sample/ivf_rabitq_querying_gpu_cpu_trace_progress.cu",
+      "destination": "src/experimental/backlog_trace.cu",
+      "source_sha256": "8c488c439e33a9d47522a75841ec0b61a93c931406e2bcd6c0b5d66ed7bc667d",
+      "imported_sha256": "cb8010ecd6c95ff684c8498caf5c127eeed315117b74ced950d42c975b18d528",
+      "compare_cpp_tokens": true
+    },
+    {
+      "source": "tests/experiment_options_test.cpp",
+      "destination": "tests/experiment_options_test.cpp",
+      "source_sha256": "1ee60b1c5a29d8c6a19154e3defa020f9c1eb174d43842c0ef95a1f436a706e8",
+      "imported_sha256": "6761d3aaaf9987a940e74288c42d6df0a59c7e2f2194b6478d40c86e65f4ab03"
+    },
+    {
+      "source": "tests/recall_evaluator_test.cpp",
+      "destination": "tests/recall_evaluator_test.cpp",
+      "source_sha256": "e12eac922b648997e9bcf9eddb560b4ab3b2fce01ac042105d48ba70f7a65532",
+      "imported_sha256": "af5a20349e15a22cdb333ebf81f8fccd27b48a4cc127dcdf33a6d02670b47ada"
+    },
+    {
+      "source": "tests/gpu_cpu_highk_vanguard_test.cpp",
+      "destination": "tests/gpu_cpu_highk_vanguard_test.cpp",
+      "source_sha256": "5a6eb053f4e0b40a882229916f2e7041989fa137da3c89288b21dcacf5c13b09",
+      "imported_sha256": "86393cddc63a30e29b889b2edfbb1bd58da7fcd672f761a3512920bcfd64214d"
+    },
+    {
+      "source": "tests/gpu_index_residency_test.cpp",
+      "destination": "tests/gpu_index_residency_test.cpp",
+      "source_sha256": "9e54b1bad2416d742ed9a6741ca677de8642ef076ad983f657a8785e5ac94280",
+      "imported_sha256": "df03f1c48b38a3e12e52b1e6df57734b078e6388290d61f108af90b67814759f"
+    },
+    {
+      "source": "tests/gpu_highk_validation.cpp",
+      "destination": "tests/gpu_highk_validation.cpp",
+      "source_sha256": "2c794ce402f065164e81f2aced9392b075c2e40de9131c847c6294fd925497a5",
+      "imported_sha256": "03d3d6eb45199454146b6af925bf674bddafdab5fb62c6519440155ee9749241"
+    },
+    {
+      "source": "sample/generate_gt_gpu.py",
+      "destination": "tools/data/generate_gt_gpu.py",
+      "source_sha256": "8c3831cc01a1cabffe7aa47a735af7199b0636b0376b1fc82a4240449a66a8b7",
+      "imported_sha256": "8c3831cc01a1cabffe7aa47a735af7199b0636b0376b1fc82a4240449a66a8b7"
+    },
+    {
+      "source": "python/utils/io.py",
+      "destination": "tools/data/vector_io.py",
+      "source_sha256": "40ad9f4a06fb64d4fa0f60a26f2cba49bc90ee8991dbc4c2faf7a5facaf165f4",
+      "imported_sha256": "40ad9f4a06fb64d4fa0f60a26f2cba49bc90ee8991dbc4c2faf7a5facaf165f4"
+    },
+    {
+      "source": "python/ivf.py",
+      "destination": "tools/data/train_ivf_legacy.py",
+      "source_sha256": "7a9f0780d691cc49cbe0a09920f42bb2ac84d2181cfed2d0047fdce0dd8982a5",
+      "imported_sha256": "e0cae255a346d41d11dbf3eabce64daf0d26cdb9c333a04687e8dec70dd0bd6d"
+    },
+    {
+      "source": "tests/test_generate_gt_gpu.py",
+      "destination": "tests/test_generate_gt_gpu.py",
+      "source_sha256": "a8f87c6b1d63be09c4893ddb46b947baf5a5c38462a974e9262caba08d4b9096",
+      "imported_sha256": "90cc8eeef29e875bccbe90b7609088e4a47bf1c40e0eb5597a0a366e1d417cd3"
+    }
+  ]
+}

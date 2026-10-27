@@ -1,0 +1,23 @@
+name: CPU build and checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Configure without CUDA
+        run: cmake -S . -B build -DCORAANNS_ENABLE_CUDA=OFF -DCORAANNS_NATIVE_ARCH=OFF
+      - name: Build
+        run: cmake --build build -j2
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

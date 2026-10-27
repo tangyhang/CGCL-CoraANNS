@@ -1,0 +1,17 @@
+/build*/
+/data/
+/results/
+__pycache__/
+*.py[cod]
+*.o
+*.a
+*.so
+*.log
+*.index
+*.fbin
+*.ibin
+*.fvecs
+*.ivecs
+*.ncu-rep
+*.nsys-rep
+.DS_Store

@@ -1,0 +1,208 @@
+{
+  "dataset": "laion100m",
+  "nlist": 65536,
+  "bits": 8,
+  "metric": "l2",
+  "files": {
+    "base": "laion100m-768d_base.fbin",
+    "queries": "laion-768d_query.fbin",
+    "groundtruth": "laion100m_gt.ivecs",
+    "index": "ivf_65536_8_gpu.index"
+  },
+  "search": {
+    "topk": 100,
+    "rounds": 5,
+    "warmup": 1,
+    "threads": 72,
+    "batch_q": 4,
+    "query_chunk": 1000,
+    "gpu_query_chunk": 1000,
+    "vanguard_size": 5,
+    "cpu_secondary_filter": true,
+    "cross_query_reuse": true
+  },
+  "experiments": {
+    "overall": {
+      "nprobes": [
+        13,
+        16,
+        20,
+        24,
+        29,
+        40,
+        50,
+        62,
+        88,
+        112,
+        146,
+        207,
+        280,
+        350,
+        475,
+        695,
+        960,
+        1650,
+        2200,
+        3200
+      ]
+    },
+    "ablation": {
+      "nprobes": [
+        13,
+        16,
+        20,
+        24,
+        29,
+        40,
+        50,
+        62,
+        88,
+        112,
+        146,
+        207,
+        280,
+        350,
+        475,
+        695,
+        960,
+        1650,
+        2200,
+        3200
+      ]
+    },
+    "vanguard": {
+      "nprobes": [
+        12,
+        13,
+        16,
+        20,
+        24,
+        29,
+        40,
+        50,
+        62,
+        88,
+        112,
+        146,
+        207,
+        280,
+        350,
+        475,
+        695,
+        960,
+        1650,
+        2200,
+        3200
+      ],
+      "sizes": [
+        1,
+        2,
+        4,
+        8
+      ]
+    },
+    "threads": {
+      "nprobes": [
+        12,
+        13,
+        16,
+        20,
+        24,
+        29,
+        40,
+        50,
+        62,
+        88,
+        112,
+        146,
+        207,
+        280,
+        350,
+        475,
+        695,
+        960,
+        1650,
+        2200,
+        3200
+      ],
+      "threads": [
+        18,
+        36,
+        72
+      ],
+      "vanguard_size": 4
+    },
+    "topk": {
+      "groundtruth": "laion100m_gt_top1000.ivecs",
+      "jobs": [
+        {
+          "topk": 500,
+          "nprobes": [
+            20,
+            22,
+            24,
+            26,
+            28,
+            30,
+            32,
+            36,
+            40,
+            48,
+            50,
+            56,
+            64,
+            76,
+            88,
+            100,
+            112,
+            128,
+            146,
+            170,
+            200,
+            240,
+            280,
+            320,
+            400,
+            450,
+            500,
+            600,
+            800,
+            1000,
+            1600,
+            3200
+          ]
+        },
+        {
+          "topk": 1000,
+          "nprobes": [
+            28,
+            32,
+            40,
+            50,
+            64,
+            88,
+            112,
+            146,
+            200,
+            280,
+            400,
+            600,
+            1000,
+            1600,
+            3200
+          ]
+        }
+      ]
+    }
+  },
+  "parameter_sources": {
+    "ablation": "CoraANN_ablation_laion100m.sh",
+    "vanguard": "CoraANN_vanguard_laion100m.sh",
+    "threads": "CoraANN_threads_laion100m.sh",
+    "topk": "CoraANN_laion100m_highk_formal.json"
+  },
+  "notes": [
+    "Overall uses the ablation nprobe grid for a consistent fresh comparison; it is not a claim to reproduce every historical spreadsheet row.",
+    "Recall is measured from this run. No historical recall values are substituted."
+  ]
+}

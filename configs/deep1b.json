@@ -1,0 +1,127 @@
+{
+  "dataset": "deep1b",
+  "nlist": 262144,
+  "bits": 8,
+  "metric": "l2",
+  "files": {
+    "base": "base.1B.fbin",
+    "queries": "query.public.10K.fbin",
+    "groundtruth": "deep1B_groundtruth.ibin",
+    "index": "ivf_262144_8_gpu.index"
+  },
+  "search": {
+    "topk": 100,
+    "rounds": 5,
+    "warmup": 1,
+    "threads": 72,
+    "batch_q": 4,
+    "query_chunk": 3334,
+    "gpu_query_chunk": 512,
+    "vanguard_size": 5,
+    "cpu_secondary_filter": true,
+    "cross_query_reuse": true
+  },
+  "experiments": {
+    "overall": {
+      "nprobes": [
+        42,
+        48,
+        56,
+        64,
+        80,
+        96,
+        128,
+        160,
+        224,
+        320,
+        448,
+        640,
+        832,
+        1024,
+        1280,
+        1536
+      ]
+    },
+    "ablation": {
+      "nprobes": [
+        42,
+        48,
+        56,
+        64,
+        80,
+        96,
+        128,
+        160,
+        224,
+        320,
+        448,
+        640,
+        832,
+        1024,
+        1280,
+        1536
+      ]
+    },
+    "vanguard": {
+      "nprobes": [
+        42,
+        48,
+        56,
+        64,
+        80,
+        96,
+        128,
+        160,
+        224,
+        320,
+        448,
+        640,
+        832,
+        1024,
+        1280,
+        1536
+      ],
+      "sizes": [
+        1,
+        2,
+        4,
+        8
+      ]
+    },
+    "threads": {
+      "nprobes": [
+        42,
+        48,
+        56,
+        64,
+        80,
+        96,
+        128,
+        160,
+        224,
+        320,
+        448,
+        640,
+        832,
+        1024,
+        1280,
+        1536
+      ],
+      "threads": [
+        18,
+        36,
+        72
+      ],
+      "vanguard_size": 4
+    }
+  },
+  "parameter_sources": {
+    "ablation": "CoraANN_ablation_deep1b.sh",
+    "vanguard": "CoraANN_vanguard_deep1b.sh",
+    "threads": "CoraANN_threads_deep1b.sh"
+  },
+  "notes": [
+    "Overall uses the ablation nprobe grid for a consistent fresh comparison; it is not a claim to reproduce every historical spreadsheet row.",
+    "Recall is measured from this run. No historical recall values are substituted."
+  ]
+}
