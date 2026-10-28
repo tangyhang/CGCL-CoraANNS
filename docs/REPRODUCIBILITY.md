@@ -2,9 +2,9 @@
 
 ## Input data and formats
 
-Experiments use the original squared-L2 workflow without adding normalization.
-Keep base-vector ordering, query ordering, and zero-based ground-truth IDs
-consistent. The supplied configurations describe these artifact names relative
+Experiments use raw input vectors and squared-L2 distance. Keep base-vector
+ordering, query ordering, and zero-based ground-truth IDs consistent.
+The supplied configurations describe these artifact names relative
 to `--data-root`:
 
 | Dataset | Base | Queries | Ground truth | IVF clusters |
@@ -15,11 +15,8 @@ to `--data-root`:
 
 All three use 8 total quantization bits. Index names are
 `ivf_<nlist>_8_gpu.index`. Edit a copy of the configuration if your artifacts
-have different names. Configured paths can also be absolute. Source datasets
-and prebuilt indexes are not included or automatically downloaded. The exact
-100M/88M subsets and official public download locations were not supplied with
-this migration; provide those when publishing rather than assuming a different
-subset is equivalent.
+have different names. Configured paths can also be absolute. Place your dataset
+files under `--data-root`, then train and build the index using the commands below.
 
 Binary layouts, on the target little-endian Linux platform:
 
@@ -37,13 +34,12 @@ requires at least `topk` ground-truth neighbors per query.
 
 ## Train and construct an index
 
-The named training interface keeps the original recipe: `faiss.index_factory`
+The training interface uses `faiss.index_factory`
 with `IVF<nlist>,Flat`, `index.train(base)`, centroid reconstruction, then a
-one-nearest-centroid assignment for each vector. It preserves Faiss's default
-clustering behavior and adds no sampling or training optimizations. The original
-positional tool is retained as `tools/data/train_ivf_legacy.py` for comparison.
-Pin the Faiss version in the environment used for published experiments; its
-defaults may differ between releases.
+one-nearest-centroid assignment for each vector, with Faiss's default clustering
+settings. The positional interface is available as
+`tools/data/train_ivf_legacy.py`. Record the Faiss version with your experiment
+environment.
 
 Example for LAION100M:
 
@@ -58,18 +54,16 @@ build/bin/coraanns_build_index_gpu \
   8 /data/laion100m/ivf_65536_8_gpu.index l2 false
 ```
 
-The CPU builder accepts the same arguments. Existing indexes from the source
-repository can be used directly; serialization has not changed. The GPU
-builder's `RABITQ_GPU_BATCH_SIZE` environment variable is retained. Training
-and index construction load the base matrix into host memory; the GPU batch
-setting does not make those stages out of core. Large datasets need sufficient
-host RAM, disk space, and GPU memory for the chosen settings.
+The CPU builder accepts the same arguments. Existing RaBitQ-Library IVF indexes
+can be loaded directly. Set `RABITQ_GPU_BATCH_SIZE` to control the GPU builder's
+batch size. Training and index construction load the base matrix into host
+memory; size host RAM for the full matrix and construction buffers.
 
-`tools/data/generate_gt_gpu.py --help` exposes the retained exhaustive L2
+`tools/data/generate_gt_gpu.py --help` describes the exhaustive L2
 ground-truth generator for `.fbin` inputs. It uses guarded FP32 candidate
-filtering and FP64 distance recomputation and writes `.ivecs`. This tool is
-separate from ANN indexing and requires NumPy/PyTorch. The demo generator in
-the root README provides small deterministic data without external downloads.
+filtering and FP64 distance recomputation and writes `.ivecs`. It requires
+NumPy/PyTorch. The demo generator in the root README creates a small,
+deterministic dataset.
 
 ## Run a sweep
 
@@ -79,12 +73,10 @@ python3 tools/run_experiment.py \
   --build-dir build --experiment overall --numa-interleave
 ```
 
-`--dry-run` prints fully expanded, shell-quoted commands without checking input
-existence or creating results. Execution validates the required files and
-executables before starting. Each new run gets an independent directory. An
-existing `--output-dir` is rejected. Commands are executed as argument lists,
-without a shell. A nonzero child exit or an incomplete output table fails the
-run and leaves its logs and failure metadata available.
+Use `--dry-run` to inspect the expanded commands. Execution validates input
+files and executables, then creates a new results directory. Choose a fresh
+path for `--output-dir`. Failed jobs keep their logs and exit status in the
+results directory.
 
 | Sweep | Systems or varied parameter |
 | --- | --- |
@@ -92,14 +84,14 @@ run and leaves its logs and failure metadata available.
 | `ablation` | The five systems below, using the same nprobe grid |
 | `vanguard` | Vanguard sizes 1, 2, 4, 8 |
 | `threads` | 18, 36, 72 workers, with vanguard size 4 |
-| `topk` | LAION100M top-500 and top-1000 with their original probe grids |
+| `topk` | LAION100M top-500 and top-1000 with separate probe grids |
 
-For high-k, build `coraanns_search_highk` first. The runner uses the original
+For high-k, build `coraanns_search_highk` first. The runner uses the
 512-capacity binary through top-512 and selects the 1024-capacity binary above
 that. Supply ground truth with sufficient neighbors; the LAION top-k sweep
 expects `laion100m_gt_top1000.ivecs`.
 
-The ablation mapping is fixed:
+The ablation mapping is:
 
 | System | Executable | Vanguard | CPU secondary filter |
 | --- | --- | --- | --- |
@@ -115,40 +107,33 @@ top-k 100, query batch 4, 72 CPU threads, one warmup, five measured rounds,
 and profiling disabled. `--threads N` overrides the fixed worker count for
 other hardware; the `threads` sweep uses its own configured list.
 
-`parameter_sources` in each JSON names the original scripts used for its grids
-and chunk sizes. The `overall` grid uses the ablation grid for a consistent new
-comparison. This does not recreate every row in the original workbooks. In
-particular, no 0.99 recall threshold is assumed for LAION's probe grid; check
-the measured recall before drawing such a conclusion. Changes in hardware,
-NUMA binding, compiler flags, chunk size, or metric must accompany reported results.
+`parameter_sources` in each JSON records the source scripts for its probe grids
+and chunk sizes. The `overall` and `ablation` sweeps use the same grid. Include
+hardware, NUMA binding, compiler flags, chunk size, and metric with reported results.
 
 ## Timing and recall
 
-Search executables keep their original timer boundaries and emit the final
-`nprobe / QPS / recall` table. The runner reads that table rather than deriving
-QPS from wall time. QPS remains the arithmetic mean of per-round QPS. Dataset
-loading and index setup are outside the search timing. GPU filtering time
-and candidate diagnostics are separate measurements and must not be compared
-to uninstrumented end-to-end QPS without qualification.
+Search executables emit a final `nprobe / QPS / recall` table, which the runner
+uses for its summary. QPS is the arithmetic mean of per-round search QPS.
+Dataset loading and index setup precede search timing. GPU event timing covers
+the filtering phase; candidate statistics describe filtering and refinement work.
 
-`--recall-base FILE` enables the retained distance-aware evaluator. It counts
-returned GT IDs and additional IDs satisfying the GT distance threshold; ties,
-duplicates, invalid IDs, and numeric boundaries follow the source evaluator's
-existing rules. Without a base file, the executable reports ID recall only.
-Every result table and metadata file records the chosen mode. A run in ID mode
-cannot be presented as calibrated distance-aware recall.
+The runner defaults to distance-aware recall. Every result table and metadata
+file records the selected mode.
 
-The runner defaults to distance-aware mode and passes `--recall-base`; it
-never silently substitutes historical values. Explicit `--recall-mode id`
-permits timing-only work when the base vectors are unavailable. The base file
-is used for evaluation, not automatically for search refinement.
-`--exact-base FILE` enables the separate FP32 refinement diagnostic in the main
-driver; it is not a standard paper configuration and the runner does not set it.
+| Option | Effect |
+| --- | --- |
+| Runner: `--recall-mode distance-aware` | Passes base vectors to the evaluator through `--recall-base` |
+| Runner: `--recall-mode id` | Evaluates returned IDs against ground-truth IDs |
+| Search driver: `--recall-base FILE` | Counts GT ID hits and additional returned IDs satisfying the GT distance threshold |
+| `coraanns_search`: `--exact-base FILE` | Uses FP32 base vectors for refinement |
 
-The main and GPU drivers also retain `--recall-once true`, which defers recall
-evaluation until after timing and evaluates the first measured round's saved
-results. The standard runner leaves the original default (false). If you use
-this option directly, report its meaning with the results.
+The standard runner configures recall evaluation. For FP32 refinement
+diagnostics, invoke `coraanns_search` directly with `--exact-base`.
+
+The main and GPU drivers support `--recall-once true`: recall is evaluated
+after timing using the first measured round's saved results. The default is
+false, which evaluates recall for each measured round.
 
 ## Saved outputs
 
@@ -159,7 +144,5 @@ this option directly, report its meaning with the results.
 - `summary.csv`: dataset, experiment, job, top-k, nprobe, QPS, recall, recall
   mode, and source log; completed jobs are retained if a later job fails.
 
-The runner does not hash multi-terabyte datasets. Archive your final source
-revision, dependency environment, hardware details, and dataset/index checksums
-along with published results. No historical tables or profiler outputs are
-included as newly measured evidence.
+Archive the source revision, dependency environment, hardware details, and
+dataset/index checksums with published results.

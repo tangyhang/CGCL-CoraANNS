@@ -1,9 +1,9 @@
 # Checks
 
-The CMake suite runs without network access, large datasets, or Google Test.
+The CMake suite includes standalone C++ checks and Python integration tests.
 
-- `experiment_options_test`: retained option-validation coverage.
-- `recall_evaluator_test`: retained ID/distance-aware recall, tie, invalid-ID,
+- `experiment_options_test`: option validation.
+- `recall_evaluator_test`: ID/distance-aware recall, tie, invalid-ID,
   metric, and file-format cases.
 - `cpu_pipeline`: independent synthetic vectors with known nearest IDs; CPU
   index construction, serialization, loading, search, and recall evaluation.
@@ -12,8 +12,7 @@ The CMake suite runs without network access, large datasets, or Google Test.
   inputs, paths with spaces, dry runs, and existing-result preservation.
 
 Run `ctest --test-dir build-cpu --output-on-failure` after a CPU-only build.
-The GitHub Actions workflow exercises this path; the hosted workflow itself
-has not been run as part of this local migration.
+The GitHub Actions workflow exercises this path.
 
 With `CORAANNS_BUILD_GPU_TESTS=ON`, three additional CTest entries link the
 production libraries: `gpu_cpu_highk_vanguard_test`,

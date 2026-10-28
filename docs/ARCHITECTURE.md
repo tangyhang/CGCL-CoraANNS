@@ -1,8 +1,7 @@
 # Implementation map
 
-The project separates command-line orchestration from production computation
-and inherited RaBitQ support code. The original implementation class names and
-layout remain intact to keep this migration independent of algorithm changes.
+The project separates command-line orchestration, search computation, and
+RaBitQ support code.
 
 | Responsibility | Main location |
 | --- | --- |
@@ -19,38 +18,29 @@ layout remain intact to keep this migration independent of algorithm changes.
 
 ## Search flow
 
-1. The driver reads queries, ground truth, and the existing IVF index. It adapts
-   RaBitQ's packed index layout to the original GPU/CPU data layout, preserving
-   code compaction, factors, IDs, and ownership lifetimes.
+1. The driver reads queries, ground truth, and the IVF index. It adapts
+   RaBitQ's packed codes, factors, and IDs to the GPU/CPU data layout.
 2. The search engine allocates its workspace and prepares queries and probe
-   lists. Pair scheduling retains the vanguard-first ordering.
-3. GPU filtering publishes candidates to the original shared task mechanism.
-   Vanguard processing supplies early thresholds and retains recovery behavior.
+   lists. Pair scheduling processes vanguard clusters first.
+3. GPU filtering publishes candidates to the shared task queue. Vanguard
+   processing supplies early thresholds and performs recovery scanning.
 4. CPU workers consume tasks, optionally apply the secondary threshold check,
    refine from extended RaBitQ codes, and update per-query top-k and thresholds.
-5. The driver gathers IDs, applies the retained recall evaluator outside search
+5. The driver gathers IDs, applies the recall evaluator outside search
    timing, and prints per-round measurements and the final table.
 
-The candidate queue, memory fences, worker scheduling, kernel choices,
-threshold updates, LUT arithmetic, and index binary layout have not been
-redesigned. The production CPU worker definitions were moved out of the
-command-line file so they can be linked by the library and GPU correctness
-tests without importing `main()`.
-
-The driver still uses the inherited packed-layout adapter, including its
-`private` visibility macro around RaBitQ includes. It is a compatibility seam,
-not a stable public serialization API. This migration keeps it to preserve the
-existing loading and ownership behavior; future API work should be reviewed
-separately from the paper artifact.
+The CPU worker implementation is shared by the search library and GPU
+correctness tests. The driver handles packed-index adaptation and owns the
+host arrays used by the engine.
 
 ## Other implementations
 
 `apps/baselines/cpu.cpp` uses the parallel CPU RaBitQ search. The GPU baseline
 is split between `apps/baselines/gpu.cpp`, its interface, and
-`src/baselines/gpu.cu`; host-excode, HBM, cache, and tiled-kernel options remain.
+`src/baselines/gpu.cu`. It supports host-excode, HBM, cache, and tiled-kernel
+options.
 
-`experimental/` retains CPU-filter/GPU-refinement, global GPU, asymmetric
-two-phase, and backlog-tracing variants. These do not replace the main system
-and are opt-in through CMake. Their CLI and algorithm-specific output formats
-remain as in the source. The common mechanism CLI is retained separately as
-`include/coraanns/benchmark/mechanism_options.hpp`.
+`experimental/` contains CPU-filter/GPU-refinement, global GPU, asymmetric
+two-phase, and backlog-tracing variants. Build them with
+`CORAANNS_BUILD_EXPERIMENTAL=ON` and run their individual executables. Shared
+mechanism options are in `include/coraanns/benchmark/mechanism_options.hpp`.

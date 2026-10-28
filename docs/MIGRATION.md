@@ -1,25 +1,9 @@
-# Migration provenance
+# Source map
 
-The input was the local RaBitQ-Library working tree, not just a Git revision.
-Its HEAD was `14d844154606a901c0c6b58940fcffe2fb32a09f`. The source repository
-was read only during this migration. No datasets, indexes, build products,
-spreadsheets, profiler traces, historical result CSVs, or local agent settings
-were imported.
-
-The import manifest records source and destination SHA-256 hashes, paths, and
-the character ranges for the production C++ split. Each source hash covers
-the complete original file, including working-tree changes. The include-path
-mapping is recorded too. The original dependency headers and license files
-are preserved byte for byte; the six system-specific GPU headers now belong
-to `include/coraanns/`.
-
-Production files have consistent formatting, disabled-code comment blocks have
-been removed, and unreadable CPU/interface comments have been replaced with
-concise explanations. With `--source-root`, the audit also compares the active
-C++/CUDA token sequences of all 27 imported system/driver/shared-header files.
-It ignores comments and whitespace and permits the recorded include moves and
-the explicit headers needed by the CPU file split. The computational code is
-unchanged by this cleanup.
+The source snapshot comes from the RaBitQ-Library working tree at HEAD
+`14d844154606a901c0c6b58940fcffe2fb32a09f`. `import_manifest.json` records source
+and destination paths, SHA-256 hashes, include-path mappings, and the character
+ranges used to split the production C++ file.
 
 | Original path in RaBitQ-Library | Current path |
 | --- | --- |
@@ -37,31 +21,24 @@ unchanged by this cleanup.
 | `python/ivf.py`, `python/utils/io.py` | `tools/data/train_ivf_legacy.py`, `vector_io.py` |
 | `sample/generate_gt_gpu.py` | `tools/data/generate_gt_gpu.py` |
 
-The split CPU file adds its required explicit headers, including
-`rabitqlib/utils/space.hpp`; it previously received these transitively through
-the command-line driver's IVF includes. Search code, data layouts, defaults,
-and option names remain unchanged. The new executable target names replace
-the old `ivf_rabitq_*` names; use the mapping above when comparing commands.
+The CPU worker file includes `rabitqlib/utils/space.hpp` for extended-code
+distance functions. Project tools provide target-based builds, IVF training,
+demo data, parameter sweeps, and result collection.
 
-New project code consists of the target-based CMake build, named training
-wrapper, small demo generator, experiment runner, migration checker, smoke and
-runner integration tests, and documentation. Configurations extract probe grids
-and selected parameters from named original scripts; they do not import the
-scripts' local paths or historical recall values. External BANG/FlowANN/cuVS
-comparison adapters and unrelated RaBitQ demos are outside this system artifact.
+## Verify the source snapshot
 
-Check the local snapshot:
+Check imported-file hashes:
 
 ```bash
 python3 tools/verify_import.py
 ```
 
-Also check that the original files still match the recorded import sources:
+Compare against the RaBitQ-Library working tree:
 
 ```bash
 python3 tools/verify_import.py --source-root /path/to/RaBitQ-Library
 ```
 
-This check intentionally describes the imported snapshot. Subsequent intentional
-code changes should have their own revision and review record; changing the
-manifest to conceal an algorithm change would defeat its purpose.
+With `--source-root`, the checker also compares the active C++/CUDA token
+sequences of 27 implementation, driver, and shared-header files after applying
+the recorded include mappings and split-file headers.
