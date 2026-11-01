@@ -21,18 +21,17 @@ using gt_type = rabitqlib::RowMajorArray<uint32_t>;
 
 namespace {
 
-void print_usage(const char* program) {
-    std::cerr
-        << "Usage: " << program
-        << " <index_file> <query_file> <gt_file>"
-           " [--topk 100] [--nprobes 40,50,...] [--rounds 5]"
-           " [--warmup 1] [--threads N] [--hacc true] [--profile false]"
-           " [--recall-base FILE]\n";
+void print_usage(const char *program) {
+    std::cerr << "Usage: " << program
+              << " <index_file> <query_file> <gt_file>"
+                 " [--topk 100] [--nprobes 40,50,...] [--rounds 5]"
+                 " [--warmup 1] [--threads N] [--hacc true] [--profile false]"
+                 " [--recall-base FILE]\n";
 }
 
-}  // namespace
+} // namespace
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     if (argc < 4) {
         print_usage(argv[0]);
         return 1;
@@ -42,8 +41,7 @@ int main(int argc, char** argv) {
         const auto recall_base = recall_eval::take_base_option(argc, argv);
         // Preserve the old fourth positional argument (true/false) so existing
         // scripts keep working. New benchmark scripts should use named options.
-        const bool legacy_mode =
-            argc > 4 && !rabitq_benchmark::starts_with_option(argv[4]);
+        const bool legacy_mode = argc > 4 && !rabitq_benchmark::starts_with_option(argv[4]);
         bool use_hacc = true;
         std::size_t option_begin = 4;
         if (legacy_mode) {
@@ -52,7 +50,8 @@ int main(int argc, char** argv) {
                     "The legacy CPU form accepts only one positional hacc value");
             }
             const std::string value(argv[4]);
-            if (value == "false") use_hacc = false;
+            if (value == "false")
+                use_hacc = false;
             else if (value != "true") {
                 throw std::invalid_argument("hacc must be true or false");
             }
@@ -61,19 +60,17 @@ int main(int argc, char** argv) {
 
         rabitq_benchmark::CliOptions options(argc, argv, option_begin);
         options.require_known(
-            {"topk", "nprobes", "rounds", "warmup", "threads", "hacc",
-             "profile"});
+            {"topk", "nprobes", "rounds", "warmup", "threads", "hacc", "profile"});
 
         const std::size_t topk = options.get_size("topk", 100);
         const std::size_t test_rounds = options.get_size("rounds", 5);
         const std::size_t warmup_rounds = options.get_size("warmup", 1);
-        const std::size_t requested_threads = options.get_size(
-            "threads", static_cast<std::size_t>(omp_get_max_threads()));
+        const std::size_t requested_threads =
+            options.get_size("threads", static_cast<std::size_t>(omp_get_max_threads()));
         use_hacc = options.get_bool("hacc", use_hacc);
         const bool profile = options.get_bool("profile", false);
         if (requested_threads == 0 ||
-            requested_threads > static_cast<std::size_t>(
-                                    std::numeric_limits<int>::max())) {
+            requested_threads > static_cast<std::size_t>(std::numeric_limits<int>::max())) {
             throw std::invalid_argument("threads must be a positive int");
         }
         const int thread_count = static_cast<int>(requested_threads);
@@ -89,19 +86,16 @@ int main(int argc, char** argv) {
         index_type ivf;
         ivf.load(argv[1]);
 
-        rabitq_benchmark::validate_benchmark_shape(
-            query.rows(), query.cols(), gt.rows(), gt.cols(), ivf.dim(), topk,
-            test_rounds);
-        const auto nprobes = rabitq_benchmark::parse_nprobes(
-            options.get("nprobes", ""), ivf.num_clusters());
+        rabitq_benchmark::validate_benchmark_shape(query.rows(), query.cols(), gt.rows(), gt.cols(),
+                                                   ivf.dim(), topk, test_rounds);
+        const auto nprobes =
+            rabitq_benchmark::parse_nprobes(options.get("nprobes", ""), ivf.num_clusters());
 
         const std::size_t nq = query.rows();
         recall_eval::Evaluator recall_evaluator(query, gt, topk, recall_base, ivf.metric_type());
         std::vector<PID> all_results(nq * topk);
-        std::vector<std::vector<float>> all_qps(
-            test_rounds, std::vector<float>(nprobes.size()));
-        std::vector<std::vector<float>> all_recall(
-            test_rounds, std::vector<float>(nprobes.size()));
+        std::vector<std::vector<float>> all_qps(test_rounds, std::vector<float>(nprobes.size()));
+        std::vector<std::vector<float>> all_recall(test_rounds, std::vector<float>(nprobes.size()));
         rabitqlib::StopW stopw;
 
         std::cout << "Algorithm: CPU IVF-RaBitQ (parallel)\n"
@@ -111,15 +105,12 @@ int main(int argc, char** argv) {
                   << "warmup_rounds: " << warmup_rounds << "\n"
                   << "hacc: " << (use_hacc ? "true" : "false") << "\n"
                   << "profile: " << (profile ? "true" : "false") << "\n"
-                  << "nprobes: " << rabitq_benchmark::join_values(nprobes)
-                  << '\n';
+                  << "nprobes: " << rabitq_benchmark::join_values(nprobes) << '\n';
 
         const auto run_search = [&](std::size_t nprobe) {
 #pragma omp parallel for schedule(static) num_threads(thread_count)
             for (std::size_t i = 0; i < nq; ++i) {
-                ivf.search(
-                    &query(i, 0), topk, nprobe,
-                    all_results.data() + i * topk, use_hacc);
+                ivf.search(&query(i, 0), topk, nprobe, all_results.data() + i * topk, use_hacc);
             }
         };
 
@@ -135,26 +126,19 @@ int main(int argc, char** argv) {
                 run_search(nprobe);
                 const float total_time = stopw.get_elapsed_micro();
 
-                const auto n_scan = g_cpu_stats.total_1bit_scan.load(
-                    std::memory_order_relaxed);
-                const auto n_refine = g_cpu_stats.total_refine.load(
-                    std::memory_order_relaxed);
+                const auto n_scan = g_cpu_stats.total_1bit_scan.load(std::memory_order_relaxed);
+                const auto n_refine = g_cpu_stats.total_refine.load(std::memory_order_relaxed);
 
-                all_qps[round][l] =
-                    static_cast<float>(nq) / (total_time / 1e6F);
+                all_qps[round][l] = static_cast<float>(nq) / (total_time / 1e6F);
                 all_recall[round][l] = recall_evaluator.evaluate(all_results);
-                std::cout << "[Run] round=" << (round + 1)
-                    << " nprobe=" << nprobe
-                    << " QPS=" << all_qps[round][l]
-                    << " recall=" << all_recall[round][l];
+                std::cout << "[Run] round=" << (round + 1) << " nprobe=" << nprobe
+                          << " QPS=" << all_qps[round][l] << " recall=" << all_recall[round][l];
                 if (profile) {
-                    std::cout
-                        << " scanned=" << n_scan
-                        << " refined=" << n_refine
-                        << " refinement_ratio="
-                        << (n_scan ? static_cast<double>(n_refine) /
-                                         static_cast<double>(n_scan)
-                                   : 0.0);
+                    std::cout << " scanned=" << n_scan << " refined=" << n_refine
+                              << " refinement_ratio="
+                              << (n_scan
+                                      ? static_cast<double>(n_refine) / static_cast<double>(n_scan)
+                                      : 0.0);
                 }
                 std::cout << '\n';
             }
@@ -164,12 +148,10 @@ int main(int argc, char** argv) {
         const auto avg_recall = rabitqlib::horizontal_avg(all_recall);
         std::cout << "nprobe\tQPS\trecall\n";
         for (std::size_t i = 0; i < nprobes.size(); ++i) {
-            std::cout << nprobes[i] << '\t' << avg_qps[i] << '\t'
-                      << avg_recall[i] << '\n';
+            std::cout << nprobes[i] << '\t' << avg_qps[i] << '\t' << avg_recall[i] << '\n';
         }
-    } catch (const std::exception& error) {
-        std::cerr << "ivf_rabitq_querying_parallel failed: " << error.what()
-                  << '\n';
+    } catch (const std::exception &error) {
+        std::cerr << "ivf_rabitq_querying_parallel failed: " << error.what() << '\n';
         print_usage(argv[0]);
         return 1;
     }

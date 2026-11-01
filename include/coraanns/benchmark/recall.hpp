@@ -17,14 +17,15 @@ namespace recall_eval {
 
 // Remove only this evaluation option before the existing CLI parses argv.
 // This also supports the old positional commands without changing their rules.
-inline std::string take_base_option(int& argc, char** argv) {
+inline std::string take_base_option(int &argc, char **argv) {
     std::string base;
     int output = 1;
     bool found = false;
     for (int i = 1; i < argc; ++i) {
         const std::string argument(argv[i]);
         if (argument == "--recall-base" || argument.rfind("--recall-base=", 0) == 0) {
-            if (found) throw std::invalid_argument("Duplicate --recall-base");
+            if (found)
+                throw std::invalid_argument("Duplicate --recall-base");
             found = true;
             if (argument == "--recall-base") {
                 if (i + 1 == argc || std::string(argv[i + 1]).rfind("--", 0) == 0) {
@@ -34,7 +35,8 @@ inline std::string take_base_option(int& argc, char** argv) {
             } else {
                 base = argument.substr(14);
             }
-            if (base.empty()) throw std::invalid_argument("Empty --recall-base");
+            if (base.empty())
+                throw std::invalid_argument("Empty --recall-base");
         } else {
             argv[output++] = argv[i];
         }
@@ -50,13 +52,15 @@ inline std::string take_base_option(int& argc, char** argv) {
 struct Counts {
     std::size_t total = 0;
     std::size_t id_hits = 0;
-    std::size_t distance_hits = 0;  // Additional hits, excluding ID matches.
+    std::size_t distance_hits = 0; // Additional hits, excluding ID matches.
     std::size_t exact_checks = 0;
     std::size_t cache_hits = 0;
     double milliseconds = 0.0;
 
-    std::size_t correct() const { return id_hits + distance_hits; }
-    Counts& operator+=(const Counts& other) {
+    std::size_t correct() const {
+        return id_hits + distance_hits;
+    }
+    Counts &operator+=(const Counts &other) {
         total += other.total;
         id_hits += other.id_hits;
         distance_hits += other.distance_hits;
@@ -68,17 +72,15 @@ struct Counts {
 };
 
 class Evaluator {
-public:
+  public:
     template <typename QueryMatrix, typename GtMatrix>
-    Evaluator(const QueryMatrix& queries, const GtMatrix& gt, std::size_t topk,
-              const std::string& base_file,
-              rabitqlib::MetricType metric = rabitqlib::METRIC_L2)
-        : Evaluator(queries.data(), queries.rows(), queries.cols(), gt, topk,
-                    base_file, metric) {}
+    Evaluator(const QueryMatrix &queries, const GtMatrix &gt, std::size_t topk,
+              const std::string &base_file, rabitqlib::MetricType metric = rabitqlib::METRIC_L2)
+        : Evaluator(queries.data(), queries.rows(), queries.cols(), gt, topk, base_file, metric) {}
 
     template <typename GtMatrix>
-    Evaluator(const float* queries, std::size_t query_count, std::size_t dim,
-              const GtMatrix& gt, std::size_t topk, const std::string& base_file,
+    Evaluator(const float *queries, std::size_t query_count, std::size_t dim, const GtMatrix &gt,
+              std::size_t topk, const std::string &base_file,
               rabitqlib::MetricType metric = rabitqlib::METRIC_L2)
         : queries_(queries), nq_(query_count), dim_(dim), topk_(topk), metric_(metric) {
         if (queries == nullptr || nq_ == 0 || dim_ == 0 || topk_ == 0 ||
@@ -123,28 +125,29 @@ public:
         std::cout << "[Recall] mode=" << (base_ ? "distance-aware" : "id")
                   << " metric=" << (metric_ == rabitqlib::METRIC_L2 ? "l2" : "ip")
                   << " topk=" << topk_ << " base="
-                  << (base_ ? base_file : "none (use --recall-base for distance checks)")
-                  << "\n";
+                  << (base_ ? base_file : "none (use --recall-base for distance checks)") << "\n";
     }
 
     // Different queries may be evaluated concurrently, but the same query
     // must not be evaluated by two threads at once (its cache is query-local).
-    template <typename Id>
-    Counts count_query(std::size_t q, const Id* results, std::size_t count) {
+    template <typename Id> Counts count_query(std::size_t q, const Id *results, std::size_t count) {
         static_assert(std::is_integral_v<Id>, "Result IDs must be integers");
-        if (q >= nq_) throw std::out_of_range("Recall query is out of range");
+        if (q >= nq_)
+            throw std::out_of_range("Recall query is out of range");
         const auto started = std::chrono::steady_clock::now();
         Counts counts;
-        counts.total = topk_;  // Missing/invalid results remain misses.
+        counts.total = topk_; // Missing/invalid results remain misses.
         std::vector<std::uint32_t> ids;
         ids.reserve(std::min(count, topk_));
         for (std::size_t k = 0; k < std::min(count, topk_); ++k) {
             if constexpr (std::is_signed_v<Id>) {
-                if (results[k] < 0) continue;
+                if (results[k] < 0)
+                    continue;
             }
             const auto wide_id = static_cast<std::uint64_t>(results[k]);
             if (wide_id >= std::numeric_limits<std::uint32_t>::max() ||
-                (base_ && wide_id >= base_->rows())) continue;
+                (base_ && wide_id >= base_->rows()))
+                continue;
             ids.push_back(static_cast<std::uint32_t>(wide_id));
         }
         // Do not give repeated occurrences of the SAME ID multiple credits.
@@ -155,10 +158,11 @@ public:
         for (const auto id : ids) {
             if (std::binary_search(truth_begin, truth_begin + topk_, id)) {
                 ++counts.id_hits;
-                continue;  // No vector access or true-distance calculation.
+                continue; // No vector access or true-distance calculation.
             }
-            if (!base_) continue;
-            auto& cache = cache_[q];
+            if (!base_)
+                continue;
+            auto &cache = cache_[q];
             const auto cached = cache.find(id);
             bool accepted;
             if (cached != cache.end()) {
@@ -168,35 +172,36 @@ public:
                 const double score = exact_score(q, id);
                 // No epsilon: near neighbors outside the GT radius are misses.
                 // For IP, a larger exact inner product is better.
-                accepted = finite(score) && (metric_ == rabitqlib::METRIC_L2
-                    ? score <= thresholds_[q] : score >= thresholds_[q]);
+                accepted =
+                    finite(score) && (metric_ == rabitqlib::METRIC_L2 ? score <= thresholds_[q]
+                                                                      : score >= thresholds_[q]);
                 ++counts.exact_checks;
                 // Bound memory in very long parameter sweeps. Cache decisions,
                 // not raw vectors; eviction is unnecessary for correctness.
-                if (cache.size() < 4096) cache.emplace(id, accepted);
+                if (cache.size() < 4096)
+                    cache.emplace(id, accepted);
             }
             counts.distance_hits += accepted;
         }
-        counts.milliseconds = std::chrono::duration<double, std::milli>(
-            std::chrono::steady_clock::now() - started).count();
+        counts.milliseconds =
+            std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started)
+                .count();
         return counts;
     }
 
-    double report(const Counts& counts) const {
-        if (counts.total == 0) throw std::invalid_argument("Empty recall results");
+    double report(const Counts &counts) const {
+        if (counts.total == 0)
+            throw std::invalid_argument("Empty recall results");
         const double denominator = static_cast<double>(counts.total);
         const double recall = counts.correct() / denominator;
         std::cout << "[RecallEval] id_recall=" << counts.id_hits / denominator
-                  << " recall=" << recall
-                  << " distance_hits=" << counts.distance_hits
-                  << " exact_checks=" << counts.exact_checks
-                  << " cache_hits=" << counts.cache_hits
+                  << " recall=" << recall << " distance_hits=" << counts.distance_hits
+                  << " exact_checks=" << counts.exact_checks << " cache_hits=" << counts.cache_hits
                   << " eval_ms=" << counts.milliseconds << '\n';
         return recall;
     }
 
-    template <typename Id>
-    double evaluate(const std::vector<Id>& results) {
+    template <typename Id> double evaluate(const std::vector<Id> &results) {
         if (results.size() < nq_ * topk_) {
             throw std::invalid_argument("Result array is smaller than nq * topk");
         }
@@ -207,7 +212,7 @@ public:
         // Limit concurrent page faults on cold base files; this evaluation
         // pool is entered only AFTER the search timer has stopped.
         const int workers = std::min(8, omp_get_max_threads());
-#pragma omp parallel for schedule(static) num_threads(workers) if(base_ && nq_ >= 128)
+#pragma omp parallel for schedule(static) num_threads(workers) if (base_ && nq_ >= 128)
 #endif
         for (std::size_t q = 0; q < nq_; ++q) {
             try {
@@ -216,19 +221,25 @@ public:
 #ifdef _OPENMP
 #pragma omp critical(recall_evaluation_error)
 #endif
-                { if (!error) error = std::current_exception(); }
+                {
+                    if (!error)
+                        error = std::current_exception();
+                }
             }
         }
-        if (error) std::rethrow_exception(error);
+        if (error)
+            std::rethrow_exception(error);
         Counts counts;
-        for (const auto& query : per_query) counts += query;
+        for (const auto &query : per_query)
+            counts += query;
         // Report wall time, not the sum of parallel workers' elapsed times.
-        counts.milliseconds = std::chrono::duration<double, std::milli>(
-            std::chrono::steady_clock::now() - started).count();
+        counts.milliseconds =
+            std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started)
+                .count();
         return report(counts);
     }
 
-private:
+  private:
     // Bit test also works when the benchmarks are compiled with -Ofast,
     // which can otherwise optimize away std::isfinite checks.
     static bool finite(double value) {
@@ -238,8 +249,8 @@ private:
     }
 
     double exact_score(std::size_t q, std::uint32_t id) const {
-        const auto* query = queries_ + q * dim_;
-        const auto* vector = base_->row(id);
+        const auto *query = queries_ + q * dim_;
+        const auto *vector = base_->row(id);
         double score = 0.0;
         if (metric_ == rabitqlib::METRIC_L2) {
             for (std::size_t d = 0; d < dim_; ++d) {
@@ -254,7 +265,7 @@ private:
         return score;
     }
 
-    const float* queries_;
+    const float *queries_;
     std::size_t nq_, dim_, topk_;
     rabitqlib::MetricType metric_;
     std::unique_ptr<graph_baseline::FloatVectorMMap> base_;
@@ -263,4 +274,4 @@ private:
     std::vector<std::unordered_map<std::uint32_t, bool>> cache_;
 };
 
-}  // namespace recall_eval
+} // namespace recall_eval

@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Configure without CUDA
-        run: cmake -S . -B build -DCORAANNS_ENABLE_CUDA=OFF -DCORAANNS_NATIVE_ARCH=OFF
+        run: cmake -S . -B build -DCORAANNS_ENABLE_CUDA=OFF -DCORAANNS_NATIVE_ARCH=OFF -DBUILD_TESTING=ON
       - name: Build
         run: cmake --build build -j2
       - name: Test

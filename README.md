@@ -6,16 +6,15 @@ shared thresholds, CPU secondary filtering, and cross-query reuse.
 
 [中文说明](README.zh-CN.md) · [Build](docs/BUILD.md) ·
 [Reproduce experiments](docs/REPRODUCIBILITY.md) ·
-[Implementation map](docs/ARCHITECTURE.md) · [Candidate ring](docs/RING_QUEUE.md) ·
-[Source map](docs/MIGRATION.md)
+[Implementation map](docs/ARCHITECTURE.md) · [Tests](tests/README.md)
 
 ## Layout
 
 ```text
 apps/                    Command-line index builders and search drivers
-include/coraanns/        Search interfaces and shared benchmark utilities
+include/coraanns/        Search, index, I/O, and benchmark interfaces
 src/search/              Production GPU search and CPU refinement
-src/index/               GPU index construction
+src/index/               Index construction and packed-data adaptation
 src/baselines/           GPU RaBitQ baseline
 src/experimental/        Optional mechanism and backlog-tracing variants
 configs/                 Portable LAION100M, Deep1B, and Wiki88M configurations
@@ -23,7 +22,7 @@ tools/data/              Data generation, IVF training, and ground-truth tools
 tools/run_experiment.py  Experiment commands, raw logs, metadata, and CSV output
 tests/                   CPU checks and optional GPU correctness checks
 third_party/rabitq/      Vendored RaBitQ dependency with original notices
-docs/                    Build, data, evaluation, provenance, and release notes
+docs/                    Build, architecture, data formats, and experiment reproduction
 ```
 
 ## Build
@@ -113,5 +112,4 @@ layouts, training commands, evaluation, and experiment parameters.
 
 This project uses the [Apache License 2.0](LICENSE). See the
 [third-party notices](THIRD_PARTY_NOTICES.md) for dependency licenses and
-attribution. RaBitQ's README is at `third_party/rabitq/UPSTREAM_README.md`. The
-[source map](docs/MIGRATION.md) lists the corresponding source files.
+attribution. RaBitQ's README is at `third_party/rabitq/UPSTREAM_README.md`.

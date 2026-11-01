@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the preserved search executables with portable dataset configurations."""
+"""Run search experiments with portable dataset configurations."""
 from __future__ import annotations
 
 import argparse
@@ -146,6 +146,14 @@ def parse_summary(text, expected):
     return rows
 
 
+def executable_sha256(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 def write_json(path, data):
     path.write_text(json.dumps(data, indent=2) + "\n")
 
@@ -197,7 +205,10 @@ def main(argv=None):
                 "environment": {key: env[key] for key in env_keys},
                 "platform": platform.platform(), "python": sys.version,
                 "recall_mode": args.recall_mode, "experiment": args.experiment,
-                "import_manifest_sha256": hashlib.sha256((ROOT / "docs/import_manifest.json").read_bytes()).hexdigest(),
+                "executables": {
+                    name: {"path": str((args.build_dir / "bin" / name).resolve()),
+                           "sha256": executable_sha256(args.build_dir / "bin" / name)}
+                    for name in sorted({job["binary"] for job in jobs})},
                 "jobs": jobs}
     write_json(output / "metadata.json", metadata)
     (output / "commands.sh").write_text("#!/usr/bin/env bash\nset -euo pipefail\n" +

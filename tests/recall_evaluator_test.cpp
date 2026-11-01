@@ -1,7 +1,8 @@
 // Standalone, host-only regression tests (including the -Ofast build used by
 // the benchmarks). Optional arguments: BASE QUERY GT, to time a real-data
 // evaluation pass using GT ranks 2..11 as predictions for recall@10.
-// g++ -std=c++17 -Ofast -march=native -fopenmp -Iinclude -Isample tests/recall_evaluator_test.cpp -o /tmp/recall_evaluator_test
+// g++ -std=c++17 -Ofast -march=native -fopenmp -Iinclude -Isample tests/recall_evaluator_test.cpp
+// -o /tmp/recall_evaluator_test
 #include "coraanns/benchmark/recall.hpp"
 #include "rabitqlib/utils/io.hpp"
 
@@ -15,10 +16,13 @@ using Ids = rabitqlib::RowMajorArray<std::uint32_t>;
 
 namespace {
 
-template <typename Function>
-void rejects(Function&& function) {
+template <typename Function> void rejects(Function &&function) {
     bool threw = false;
-    try { function(); } catch (const std::exception&) { threw = true; }
+    try {
+        function();
+    } catch (const std::exception &) {
+        threw = true;
+    }
     assert(threw);
 }
 
@@ -26,23 +30,26 @@ struct Fixtures {
     std::filesystem::path directory;
     Fixtures() {
         char name[] = "/tmp/rabitq-recall-test.XXXXXX";
-        const auto* path = ::mkdtemp(name);
+        const auto *path = ::mkdtemp(name);
         assert(path != nullptr);
         directory = path;
     }
-    ~Fixtures() { std::filesystem::remove_all(directory); }
+    ~Fixtures() {
+        std::filesystem::remove_all(directory);
+    }
 
-    std::string write(const Floats& base, bool fvecs) const {
+    std::string write(const Floats &base, bool fvecs) const {
         const auto path = (directory / (fvecs ? "base.fvecs" : "base.fbin")).string();
         std::ofstream output(path, std::ios::binary);
         const std::uint32_t rows = base.rows(), dim = base.cols();
         if (!fvecs) {
-            output.write(reinterpret_cast<const char*>(&rows), sizeof(rows));
-            output.write(reinterpret_cast<const char*>(&dim), sizeof(dim));
+            output.write(reinterpret_cast<const char *>(&rows), sizeof(rows));
+            output.write(reinterpret_cast<const char *>(&dim), sizeof(dim));
         }
         for (std::uint32_t i = 0; i < rows; ++i) {
-            if (fvecs) output.write(reinterpret_cast<const char*>(&dim), sizeof(dim));
-            output.write(reinterpret_cast<const char*>(&base(i, 0)), dim * sizeof(float));
+            if (fvecs)
+                output.write(reinterpret_cast<const char *>(&dim), sizeof(dim));
+            output.write(reinterpret_cast<const char *>(&base(i, 0)), dim * sizeof(float));
         }
         assert(output.good());
         return path;
@@ -50,16 +57,19 @@ struct Fixtures {
 };
 
 void test_options() {
-    const auto parse = [](std::initializer_list<const char*> extra) {
+    const auto parse = [](std::initializer_list<const char *> extra) {
         std::vector<std::string> arguments{"search", "index", "query", "gt"};
-        for (const auto* text : extra) arguments.emplace_back(text);
-        std::vector<char*> argv;
-        for (auto& argument : arguments) argv.push_back(argument.data());
+        for (const auto *text : extra)
+            arguments.emplace_back(text);
+        std::vector<char *> argv;
+        for (auto &argument : arguments)
+            argv.push_back(argument.data());
         int argc = argv.size();
         argv.push_back(nullptr);
         const auto path = recall_eval::take_base_option(argc, argv.data());
         std::vector<std::string> remaining;
-        for (int i = 0; i < argc; ++i) remaining.emplace_back(argv[i]);
+        for (int i = 0; i < argc; ++i)
+            remaining.emplace_back(argv[i]);
         assert(argv[argc] == nullptr);
         return std::make_pair(path, remaining);
     };
@@ -76,7 +86,7 @@ void test_options() {
     rejects([&] { parse({"--recall-base=a", "--recall-base", "b"}); });
 }
 
-void test_distance_and_ids(const std::string& base_file) {
+void test_distance_and_ids(const std::string &base_file) {
     Floats queries(2, 2);
     queries << 0, 0, 2, 0;
     Ids gt(2, 3);
@@ -88,22 +98,22 @@ void test_distance_and_ids(const std::string& base_file) {
     };
     auto counts = check(0, {0, 1, 2});
     assert(counts.id_hits == 3 && counts.exact_checks == 0);
-    counts = check(0, {7, 3, 4});  // Duplicate vector and two different equal-distance vectors.
+    counts = check(0, {7, 3, 4}); // Duplicate vector and two different equal-distance vectors.
     assert(counts.id_hits == 0 && counts.distance_hits == 3 && counts.exact_checks == 3);
     counts = check(0, {7, 3, 4});
     assert(counts.correct() == 3 && counts.exact_checks == 0 && counts.cache_hits == 3);
     counts = check(0, {0, 3, 5});
     assert(counts.id_hits == 1 && counts.distance_hits == 1);
-    assert(check(0, {6}).correct() == 0);  // Just outside radius; no epsilon.
+    assert(check(0, {6}).correct() == 0); // Just outside radius; no epsilon.
     counts = check(0, {0, 0, 3});
     assert(counts.id_hits == 1 && counts.distance_hits == 1 && counts.total == 3);
-    assert(check(0, {0, 1}).correct() == 2);  // Missing results remain in denominator.
-    assert(check(0, {0, 1, 5, 2}).correct() == 2);  // Never examine beyond top-k.
+    assert(check(0, {0, 1}).correct() == 2);       // Missing results remain in denominator.
+    assert(check(0, {0, 1, 5, 2}).correct() == 2); // Never examine beyond top-k.
     assert(check(0, {-1, 4294967295LL, 4294967297LL}).correct() == 0);
-    assert(check(0, {11}).exact_checks == 0);  // Out-of-range base ID.
+    assert(check(0, {11}).exact_checks == 0); // Out-of-range base ID.
     assert(check(0, {8, 9}).correct() == 0);  // NaN / infinity are not hits, even at -Ofast.
-    assert(check(1, {3}).correct() == 0);  // Per-query caches cannot leak q0's decision.
-    assert(check(1, {7}).distance_hits == 1);  // Kth GT ID is 0, not largest ID (5).
+    assert(check(1, {3}).correct() == 0);     // Per-query caches cannot leak q0's decision.
+    assert(check(1, {7}).distance_hits == 1); // Kth GT ID is 0, not largest ID (5).
     rejects([&] { evaluator.evaluate(std::vector<std::uint32_t>{0}); });
 
     recall_eval::Evaluator id_only(queries, gt, 3, "");
@@ -145,7 +155,7 @@ void test_distance_and_ids(const std::string& base_file) {
     rejects([&] { recall_eval::Evaluator bad(queries, gt, 3, base_file + ".missing"); });
 }
 
-void dataset_probe(const char* base, const char* query_file, const char* gt_file) {
+void dataset_probe(const char *base, const char *query_file, const char *gt_file) {
     Floats queries;
     Ids gt;
     rabitqlib::load_auto<float, Floats>(query_file, queries);
@@ -154,25 +164,30 @@ void dataset_probe(const char* base, const char* query_file, const char* gt_file
     constexpr std::size_t topk = 10;
     const auto started = std::chrono::steady_clock::now();
     recall_eval::Evaluator evaluator(queries, gt, topk, base);
-    std::cout << "[Probe] prepare_ms=" << std::chrono::duration<double, std::milli>(
-        std::chrono::steady_clock::now() - started).count() << '\n';
+    std::cout << "[Probe] prepare_ms="
+              << std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() -
+                                                           started)
+                     .count()
+              << '\n';
     std::vector<std::uint32_t> results(queries.rows() * topk);
     for (std::size_t q = 0; q < static_cast<std::size_t>(queries.rows()); ++q) {
-        for (std::size_t k = 0; k < topk; ++k) results[q * topk + k] = gt(q, k + 1);
+        for (std::size_t k = 0; k < topk; ++k)
+            results[q * topk + k] = gt(q, k + 1);
     }
     const double first = evaluator.evaluate(results);
     const double second = evaluator.evaluate(results);
     assert(first == second);
     if (queries.rows() > 5) {
         std::vector<std::uint32_t> alternatives(topk);
-        for (std::size_t k = 0; k < topk; ++k) alternatives[k] = gt(5, k + topk);
+        for (std::size_t k = 0; k < topk; ++k)
+            alternatives[k] = gt(5, k + topk);
         const auto counts = evaluator.count_query(5, alternatives.data(), topk);
         std::cout << "[Probe] query6_GT_ranks11_to20 ";
         evaluator.report(counts);
     }
 }
 
-void test_parallel_cache(const std::string& base_file) {
+void test_parallel_cache(const std::string &base_file) {
     constexpr std::size_t nq = 256, topk = 3;
     Floats queries(nq, 2);
     Ids gt(nq, topk);
@@ -192,16 +207,18 @@ void test_parallel_cache(const std::string& base_file) {
     assert(evaluator.evaluate(results) == 2.0 / 3.0);
 }
 
-void test_paper_topks(const Fixtures& fixtures) {
+void test_paper_topks(const Fixtures &fixtures) {
     Floats base = Floats::Zero(400, 768);
     Floats query = Floats::Zero(1, 768);
     Ids gt(1, 200);
-    for (std::size_t k = 0; k < 200; ++k) gt(0, k) = k;
+    for (std::size_t k = 0; k < 200; ++k)
+        gt(0, k) = k;
     const auto path = fixtures.write(base, false);
     for (const std::size_t topk : {10, 50, 100, 200}) {
         recall_eval::Evaluator evaluator(query, gt, topk, path);
         std::vector<std::uint32_t> results(topk);
-        for (std::size_t k = 0; k < topk; ++k) results[k] = 200 + k;
+        for (std::size_t k = 0; k < topk; ++k)
+            results[k] = 200 + k;
         auto counts = evaluator.count_query(0, results.data(), topk);
         assert(counts.id_hits == 0 && counts.distance_hits == topk);
         results.back() = std::numeric_limits<std::uint32_t>::max();
@@ -210,9 +227,9 @@ void test_paper_topks(const Fixtures& fixtures) {
     }
 }
 
-}  // namespace
+} // namespace
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     if (argc == 4) {
         dataset_probe(argv[1], argv[2], argv[3]);
         return 0;
@@ -220,10 +237,9 @@ int main(int argc, char** argv) {
     test_options();
     Fixtures fixtures;
     Floats base(11, 2);
-    base << 0, 0, 1, 0, 0, 1, -1, 0, 0, -1, 2, 0,
-        std::nextafter(1.0f, 2.0f), 0, 0, 0,
-        std::numeric_limits<float>::quiet_NaN(), 0,
-        std::numeric_limits<float>::infinity(), 0, 1e-9f, 0;
+    base << 0, 0, 1, 0, 0, 1, -1, 0, 0, -1, 2, 0, std::nextafter(1.0f, 2.0f), 0, 0, 0,
+        std::numeric_limits<float>::quiet_NaN(), 0, std::numeric_limits<float>::infinity(), 0,
+        1e-9f, 0;
     test_distance_and_ids(fixtures.write(base, false));
     test_distance_and_ids(fixtures.write(base, true));
     test_parallel_cache(fixtures.write(base, false));

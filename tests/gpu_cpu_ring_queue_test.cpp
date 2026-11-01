@@ -50,8 +50,8 @@ template <size_t Count = 32768, size_t TopK = 100> struct Fixture {
 };
 
 template <class F>
-static void initialize(IVF_RaBitQ_Raw &engine, const F &f, size_t capacity, size_t spill_capacity,
-                       size_t vanguard) {
+static void initialize(coraanns::HybridIndex &engine, const F &f, size_t capacity,
+                       size_t spill_capacity, size_t vanguard) {
     engine.set_queue_capacity(capacity);
     engine.set_queue_spill_capacity(spill_capacity);
     engine.set_vanguard_size(vanguard);
@@ -60,12 +60,12 @@ static void initialize(IVF_RaBitQ_Raw &engine, const F &f, size_t capacity, size
                                   f.rotation.data(), f.short_codes.data(), f.short_factors.data(),
                                   f.long_codes.data(), f.long_factors.data(), f.ids.data(),
                                   f.sizes.data());
-    engine.max_cluster_size_ = f.count / f.clusters;
+
     engine.prepare_workspace(f.queries, f.k, f.clusters);
 }
 
 template <class F>
-static void check(IVF_RaBitQ_Raw &engine, const F &f, size_t chunk, int batch_q = 4,
+static void check(coraanns::HybridIndex &engine, const F &f, size_t chunk, int batch_q = 4,
                   bool expect_all_consumed = false) {
     std::vector<uint32_t> ids(f.queries * f.k);
     std::vector<float> distances(f.queries * f.k);
@@ -103,7 +103,7 @@ int main() {
         Fixture<> f;
         for (size_t capacity : {size_t{8192}, size_t{262144}}) {
             for (size_t vanguard : {size_t{0}, size_t{5}}) {
-                IVF_RaBitQ_Raw engine;
+                coraanns::HybridIndex engine;
                 initialize(engine, f, capacity, 262144, vanguard);
                 for (int threads : {1, 4, 16, 72}) {
                     omp_set_num_threads(threads);
@@ -127,7 +127,7 @@ int main() {
             Fixture<1032, 10> partial;
             bool spilled = false;
             for (size_t capacity : {size_t{32}, size_t{8192}}) {
-                IVF_RaBitQ_Raw engine;
+                coraanns::HybridIndex engine;
                 initialize(engine, partial, capacity, 8192, 0);
                 for (int round = 0; round < 4; ++round) {
                     check(engine, partial, partial.queries);
@@ -139,7 +139,7 @@ int main() {
         }
         {
             omp_set_num_threads(4);
-            IVF_RaBitQ_Raw engine;
+            coraanns::HybridIndex engine;
             initialize(engine, f, 8192, 262144, 5);
             for (int batch_q : {1, 2, 3, 5, 6})
                 check(engine, f, f.queries, batch_q);
@@ -149,7 +149,7 @@ int main() {
             Fixture<> empty;
             for (size_t i = 0; i < empty.count; ++i)
                 empty.short_factors[3 * i] = std::numeric_limits<float>::max();
-            IVF_RaBitQ_Raw engine;
+            coraanns::HybridIndex engine;
             initialize(engine, empty, 8192, 1024, 0);
             std::vector<uint32_t> ids(empty.queries * empty.k);
             std::vector<float> distances(ids.size());
@@ -169,9 +169,9 @@ int main() {
         {
             Fixture<128, 10> small;
             for (size_t capacity : {size_t{32}, size_t{1024}}) {
-                IVF_RaBitQ_Raw engine;
+                coraanns::HybridIndex engine;
                 initialize(engine, small, capacity, 1024, 0);
-                engine.set_ip_kernel_type(IPKernelType::BITWISE_DECOMP);
+                engine.set_ip_kernel_type(coraanns::KernelType::Bitwise);
                 for (int round = 0; round < 3; ++round)
                     check(engine, small, small.queries);
             }
@@ -179,7 +179,7 @@ int main() {
         }
         {
             omp_set_num_threads(4);
-            IVF_RaBitQ_Raw engine;
+            coraanns::HybridIndex engine;
             initialize(engine, f, 32, 0, 0);
             bool rejected = false;
             try {

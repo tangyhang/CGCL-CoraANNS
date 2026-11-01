@@ -12,8 +12,9 @@ namespace {
 constexpr size_t count = 16384, dim = 96, padded = 128;
 constexpr size_t clusters = 4, queries = 3, bits = 7;
 
-void require(bool condition, const char* message) {
-    if (!condition) throw std::runtime_error(message);
+void require(bool condition, const char *message) {
+    if (!condition)
+        throw std::runtime_error(message);
 }
 
 struct Fixture {
@@ -29,7 +30,8 @@ struct Fixture {
     std::vector<std::pair<float, uint32_t>> oracle;
 
     Fixture() {
-        for (size_t d = 0; d < dim; ++d) rotator[d * padded + d] = 1;
+        for (size_t d = 0; d < dim; ++d)
+            rotator[d * padded + d] = 1;
         for (size_t i = 0; i < count; ++i) {
             ids[i] = i;
             short_factors[3 * i] = -1e6f; // Every vector passes the lower bound.
@@ -43,12 +45,13 @@ struct Fixture {
     }
 };
 
-void check_result(const Fixture& f, size_t topk, bool host, bool cache, size_t chunk) {
-    IVF_RaBitQ_Raw engine;
+void check_result(const Fixture &f, size_t topk, bool host, bool cache, size_t chunk) {
+    coraanns::baselines::GpuIndex engine;
     engine.set_force_tiled_fine_kernel(true);
-    engine.load_from_raw_pointers(count, dim, padded, clusters, bits,
-        f.centroids.data(), f.rotator.data(), f.short_codes.data(), f.short_factors.data(),
-        f.long_codes.data(), f.ex_factors.data(), f.ids.data(), f.sizes.data(), host);
+    engine.load_from_raw_pointers(count, dim, padded, clusters, bits, f.centroids.data(),
+                                  f.rotator.data(), f.short_codes.data(), f.short_factors.data(),
+                                  f.long_codes.data(), f.ex_factors.data(), f.ids.data(),
+                                  f.sizes.data(), host);
     engine.max_cluster_size_ = count / clusters;
     engine.best_rescaling_factor = 1;
     engine.prepare_workspace(chunk, topk, clusters);
@@ -76,7 +79,7 @@ void check_result(const Fixture& f, size_t topk, bool host, bool cache, size_t c
             require(actual[k].second == f.oracle[k].second,
                     "Top-k differs from the complete CPU oracle");
             require(std::isfinite(actual[k].first) &&
-                    std::abs(actual[k].first - (f.oracle[k].first + norm)) < .001f,
+                        std::abs(actual[k].first - (f.oracle[k].first + norm)) < .001f,
                     "Distance differs from the CPU oracle");
         }
     }
@@ -93,7 +96,7 @@ int main() {
             std::cout << "PASS: GPU topk=" << topk
                       << " multi-tile HBM/host/partial-cache/chunked vs CPU oracle\n";
         }
-    } catch (const std::exception& error) {
+    } catch (const std::exception &error) {
         std::cerr << "GPU high-k validation failed: " << error.what() << '\n';
         return 1;
     }

@@ -1,144 +1,39 @@
 #pragma once
-#include <string>
 #include <cstddef>
 #include <cstdint>
-#include <vector>
-#include <queue>
-#include <atomic>
 #include <cuda_runtime.h>
+#include <cuda_fp16.h>
 #include <cublas_v2.h>
 #include "coraanns/queue/candidate_queue.hpp"
+#include "coraanns/search/parameters.hpp"
 
-static constexpr int WARP_SIZE = 32;
-constexpr size_t FAST_SIZE = 32;
-constexpr size_t DEFAULT_VANGUARD_SIZE = 5;
+namespace coraanns {
 
-static constexpr int BITS_PER_CHUNK = 4;
-static constexpr int LUT_SIZE = (1 << BITS_PER_CHUNK);
+enum class KernelType { Lut4Bit, Bitwise };
+namespace detail {
+class GPUClusterMeta;
+struct ClusterQueryPair;
+} // namespace detail
 
-constexpr int RABITQ_BQ = 8;
-
-enum class IPKernelType { LUT_4BIT, LUT_4BIT_Q2, BITWISE_DECOMP };
-
-using T = float;
-using IdxT = uint32_t;
-typedef uint32_t PID;
-
-// Schedule vanguard pairs first, then ordinary pairs by cluster/probe/query.
-struct ClusterQueryPair {
-    int cluster_idx;
-    int query_idx;
-    int probe_idx;
-};
-
-constexpr int BATCH_Q = 4;
-
-struct ClusterBatchTask {
-    int cluster_idx;
-    int num_active_queries;
-    int query_indices[BATCH_Q];
-    int probe_indices[BATCH_Q];
-};
-
-using GlobalTaskItem = coraanns::queue::Candidate;
-using QueueIndex = coraanns::queue::Position;
-using SpillTaskItem = coraanns::queue::SpillRecord;
-using GlobalAsyncBuffer = coraanns::queue::Descriptor;
-constexpr size_t DEFAULT_QUEUE_CAPACITY = coraanns::queue::default_capacity;
-constexpr size_t DEFAULT_QUEUE_SPILL_CAPACITY = coraanns::queue::default_spill_capacity;
-constexpr size_t QUEUE_CONSUMER_CHUNK = coraanns::queue::consumer_chunk;
-
-struct PairSortCompare {
-    size_t vanguard_size;
-
-    __host__ __device__ explicit PairSortCompare(size_t size = DEFAULT_VANGUARD_SIZE)
-        : vanguard_size(size) {}
-
-    __host__ __device__ bool operator()(const ClusterQueryPair &a,
-                                        const ClusterQueryPair &b) const {
-
-        bool a_is_vanguard = (static_cast<size_t>(a.probe_idx) < vanguard_size);
-        bool b_is_vanguard = (static_cast<size_t>(b.probe_idx) < vanguard_size);
-
-        if (a_is_vanguard != b_is_vanguard) {
-            return a_is_vanguard;
-        }
-
-        if (a.cluster_idx != b.cluster_idx) {
-            return a.cluster_idx < b.cluster_idx;
-        }
-
-        if (a.probe_idx != b.probe_idx) {
-            return a.probe_idx < b.probe_idx;
-        }
-
-        return a.query_idx < b.query_idx;
-    }
-};
-
-class GPUClusterMeta {
-  public:
-    size_t num;
-    size_t iter;
-    size_t remain;
-    size_t start_index;
-
-    __host__ __device__ GPUClusterMeta(size_t num, size_t start_idx)
-        : num(num), start_index(start_idx) {
-        iter = num / FAST_SIZE;
-        remain = num - iter * FAST_SIZE;
-    }
-    GPUClusterMeta() : num(0), iter(0), remain(0), start_index(0) {}
-    GPUClusterMeta(const GPUClusterMeta &other) = default;
-    GPUClusterMeta &operator=(const GPUClusterMeta &other) = default;
-    ~GPUClusterMeta() = default;
-};
-
-struct ComputeBitwiseKernelParams {
-    const ClusterQueryPair *d_sorted_pairs;
-    const GPUClusterMeta *d_cluster_meta;
-    const float *d_query;
-    const float *d_G_k1xSumq;
-    const float *d_centroid_distances;
-    const uint32_t *d_short_data;
-    const uint4 *d_short_data_u4;
-    int num_chunks;
-    int num_groups;
-    const float *d_short_factors;
-    const half *d_global_luts;
-
-    const uint32_t *d_q_bits;
-    const float *d_q_scale;
-    const float *d_q_min;
-
-    int num_queries;
-    int num_centroids;
-    int D;
-    int max_candidates_per_pair;
-    int num_pairs;
-    int topk;
-};
-
-class IVF_RaBitQ_Raw {
+class HybridIndex {
   private:
-    cublasHandle_t cublas_handle;
-    cudaStream_t stream;
-    cudaStream_t stream_d2h;
-    cudaStream_t stream_factors;
+    cublasHandle_t cublas_handle = nullptr;
+    cudaStream_t stream = nullptr;
+    cudaStream_t stream_d2h = nullptr;
+    cudaStream_t stream_factors = nullptr;
 
-    cudaEvent_t event_rot_done;
-    cudaEvent_t event_probe_done;
-    cudaEvent_t event_factors_done;
+    cudaEvent_t event_rot_done = nullptr;
+    cudaEvent_t event_probe_done = nullptr;
+    cudaEvent_t event_factors_done = nullptr;
 
-    cudaEvent_t start_event, stop_event;
-    cudaEvent_t filter_start_event, filter_stop_event;
+    cudaEvent_t start_event = nullptr, stop_event = nullptr;
+    cudaEvent_t filter_start_event = nullptr, filter_stop_event = nullptr;
 
     float *d_centroids = nullptr;
     float *d_rotator = nullptr;
     uint32_t *d_short_data = nullptr;
-    uint4 *d_short_data_u4 = nullptr;
     float *d_short_factors = nullptr;
-    GPUClusterMeta *d_cluster_meta = nullptr;
+    detail::GPUClusterMeta *d_cluster_meta = nullptr;
 
     const uint8_t *h_long_codes_ref = nullptr;
     const float *h_ex_factors_ref = nullptr;
@@ -161,6 +56,9 @@ class IVF_RaBitQ_Raw {
     size_t ex_bits = 0;
     size_t padded_dim = 0;
 
+    size_t max_cluster_size_ = 0;
+    size_t ws_vanguard_size_ = 0;
+    bool workspace_ready_ = false;
     size_t ws_max_queries = 0;
     size_t ws_max_topk = 0;
     size_t ws_max_nprobe = 0;
@@ -170,62 +68,55 @@ class IVF_RaBitQ_Raw {
     bool gpu_filter_timing_enabled_ = false;
     bool cross_query_reuse_enabled_ = true;
     bool cpu_secondary_filter_enabled_ = true;
-    size_t vanguard_size_ = DEFAULT_VANGUARD_SIZE;
+    size_t vanguard_size_ = default_vanguard_size;
 
     float *ws_d_queries = nullptr;
     float *ws_d_raw_queries = nullptr;
     float *ws_d_centroid_dists = nullptr;
-    float *ws_d_centroid_dists_copy = nullptr;
     float *ws_d_q_norms = nullptr;
     float *ws_d_c_norms = nullptr;
     float *ws_d_probe_vals = nullptr;
     int *ws_d_probe_idx = nullptr;
-    ClusterQueryPair *ws_d_sorted_pairs = nullptr;
+    detail::ClusterQueryPair *ws_d_sorted_pairs = nullptr;
     float *ws_d_G_k1xSumq = nullptr;
     float *ws_d_G_kbxSumq = nullptr;
-
-    float *ws_d_centroid_dists_sorted = nullptr;
-    int *ws_d_centroid_indices_temp = nullptr;
-    int *ws_d_centroid_indices_sorted = nullptr;
 
     int *ws_d_vanguard_seed_indices = nullptr;
     int *ws_d_vanguard_seed_counts = nullptr;
 
-    ClusterBatchTask *ws_d_batched_tasks = nullptr;
     half *ws_d_global_luts = nullptr;
 
     uint32_t *ws_d_q_bits = nullptr;
     float *ws_d_q_scale = nullptr;
     float *ws_d_q_min = nullptr;
 
-    GlobalAsyncBuffer *h_global_buffer = nullptr;
-    GlobalAsyncBuffer d_global_buffer{};
+    queue::Descriptor *h_global_buffer = nullptr;
+    queue::Descriptor d_global_buffer{};
 
-    QueueIndex *d_vram_write_count = nullptr;
+    queue::Position *d_vram_write_count = nullptr;
 
-    QueueIndex *h_global_write_count = nullptr;
+    queue::Position *h_global_write_count = nullptr;
     int *h_gpu_done = nullptr;
     float *h_dynamic_thresholds = nullptr;
     float *d_dynamic_thresholds = nullptr;
 
     int *d_global_pair_counter = nullptr;
 
-    size_t queue_capacity_ = DEFAULT_QUEUE_CAPACITY;
-    size_t queue_spill_capacity_ = DEFAULT_QUEUE_SPILL_CAPACITY;
-    coraanns::queue::Progress *h_queue_progress = nullptr;
-    QueueIndex last_written_count = 0;
-    QueueIndex last_spilled_count_ = 0;
+    size_t queue_capacity_ = queue::default_capacity;
+    size_t queue_spill_capacity_ = queue::default_spill_capacity;
+    queue::Progress *h_queue_progress = nullptr;
+    queue::Position last_written_count = 0;
+    queue::Position last_spilled_count_ = 0;
     size_t last_refined_count_ = 0;
     float last_gpu_filter_ms_ = 0.0f;
 
-    IPKernelType ip_kernel_type_ = IPKernelType::LUT_4BIT;
+    KernelType ip_kernel_type_ = KernelType::Lut4Bit;
 
   public:
-    IVF_RaBitQ_Raw();
-    ~IVF_RaBitQ_Raw();
-
-    size_t max_cluster_size_ = 0;
-    float best_rescaling_factor = 0.0f;
+    HybridIndex();
+    HybridIndex(const HybridIndex &) = delete;
+    HybridIndex &operator=(const HybridIndex &) = delete;
+    ~HybridIndex();
 
     void set_profiling(bool enabled) {
         profiling_enabled_ = enabled;
@@ -243,10 +134,10 @@ class IVF_RaBitQ_Raw {
         cpu_secondary_filter_enabled_ = enabled;
     }
 
-    QueueIndex get_last_submitted_count() const {
+    queue::Position get_last_submitted_count() const {
         return last_written_count;
     }
-    QueueIndex get_last_spilled_count() const {
+    queue::Position get_last_spilled_count() const {
         return last_spilled_count_;
     }
     void set_queue_capacity(size_t capacity);
@@ -261,22 +152,20 @@ class IVF_RaBitQ_Raw {
         return last_gpu_filter_ms_;
     }
 
-    void set_vanguard_size(size_t size) {
-        vanguard_size_ = size;
-    }
+    void set_vanguard_size(size_t size);
     size_t get_vanguard_size() const {
         return vanguard_size_;
     }
 
-    void set_ip_kernel_type(IPKernelType t) {
+    void set_ip_kernel_type(KernelType t) {
         ip_kernel_type_ = t;
     }
-    IPKernelType get_ip_kernel_type() const {
+    KernelType get_ip_kernel_type() const {
         return ip_kernel_type_;
     }
 
     void prepare_workspace(size_t max_queries, size_t max_topk, size_t max_nprobe);
-    void free_workspace();
+    void free_workspace() noexcept;
     void reset_buffer(const float *h_queries, size_t num_queries);
 
     void enable_exact_refine(const uint8_t *base_mapping, size_t base_rows, size_t base_dim,
@@ -288,9 +177,12 @@ class IVF_RaBitQ_Raw {
         exact_base_data_offset_bytes = data_offset_bytes;
     }
 
+  private:
     void cpu_exact_rerank(const float *h_queries, size_t num_queries, size_t topk, int nprobe,
                           float *h_final_dists, uint32_t *h_final_pids);
 
+  public:
+    // Host extended codes, factors and IDs are borrowed until this engine is destroyed.
     void load_from_raw_pointers(size_t num_vecs, size_t d, size_t p_d, size_t n_centroids,
                                 size_t ex_b, const float *h_centroids, const float *h_rotator,
                                 const uint32_t *h_short_data, const float *h_short_factors,
@@ -301,9 +193,13 @@ class IVF_RaBitQ_Raw {
     void seed_thresholds(const float *in, size_t nq);
 
     void search(const float *h_queries, size_t num_queries, size_t topk, size_t nprobe,
-                float *h_final_dists, uint32_t *h_final_pids, int batch_q = BATCH_Q);
+                float *h_final_dists, uint32_t *h_final_pids, int batch_q = default_batch_q);
 
   private:
     void allocate_candidate_queue();
-    void release_candidate_queue();
+    void release_candidate_queue() noexcept;
+    void release_resources() noexcept;
+    void validate_workspace(size_t queries, size_t topk, size_t nprobe) const;
 };
+
+} // namespace coraanns

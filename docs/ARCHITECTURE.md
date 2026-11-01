@@ -1,49 +1,58 @@
 # Implementation map
 
-The project separates command-line orchestration, search computation, and
-RaBitQ support code.
+CoraANNS combines GPU filtering and CPU refinement, vanguard-cluster scheduling,
+shared thresholds, CPU secondary filtering, and cross-query reuse.
 
 | Responsibility | Main location |
 | --- | --- |
-| Inputs, options, index adaptation, warmups, measurement | `apps/search.cpp` |
-| Shared search state and CPU/GPU interface | `include/coraanns/search/hybrid.cuh` |
-| GPU query preparation, probe selection, pair scheduling, filtering | `src/search/hybrid.cu` |
-| CPU task consumption, secondary filtering, refinement, top-k updates | `src/search/cpu_refinement.cpp` |
-| Candidate ring, contiguous release, GPU watermark cache and refill | `include/coraanns/queue/`, `src/search/ring_queue.cuh` |
-| CPU index construction entry | `apps/build_index.cpp` |
-| GPU index construction | `apps/build_index_gpu.cpp`, `src/index/build_gpu.cu` |
-| IVF serialization, quantization, FastScan, rotations | `third_party/rabitq/include/rabitqlib/` |
-| CLI and shape validation | `include/coraanns/benchmark/options.hpp` |
-| Recall evaluation and mapped base access | `include/coraanns/benchmark/recall.hpp`, `distance.hpp` |
+| Inputs, options, warmups, measurement and recall | `apps/search.cpp` |
+| Packed IVF adaptation and extended-code ownership | `include/coraanns/index/search_data.hpp`, `src/index/search_data.cpp` |
+| Search API and parameter limits | `include/coraanns/search/` |
+| Workspace, streams and CPU/GPU orchestration | `src/search/hybrid.cu` |
+| Rotation factors, norms, query quantization and LUT preparation | `src/search/query_kernels.cuh` |
+| Vanguard, recovery, bitwise and cross-query filtering | `src/search/filter_kernels.cuh` |
+| CPU secondary filtering, refinement and per-query top-k | `src/search/cpu_refinement.cpp` |
+| CPU/GPU index construction | `apps/build_index*.cpp`, `src/index/build_gpu.cu` |
+| IVF serialization, quantization, FastScan and rotations | `third_party/rabitq/include/rabitqlib/` |
+| Vector file mapping | `include/coraanns/io/mapped_vectors.hpp` |
+| Benchmark options and recall evaluation | `include/coraanns/benchmark/` |
 | Parameter sweeps and result collection | `configs/`, `tools/run_experiment.py` |
 
 ## Search flow
 
-1. The driver reads queries, ground truth, and the IVF index. It adapts
-   RaBitQ's packed codes, factors, and IDs to the GPU/CPU data layout.
-2. The search engine allocates its workspace and prepares queries and probe
-   lists. Pair scheduling processes vanguard clusters first.
-3. GPU filtering publishes candidates to the mapped host ring, with HBM spill
-   and refill when the ring is full. Vanguard
-   processing supplies early thresholds and performs recovery scanning.
-4. CPU workers consume tasks, optionally apply the secondary threshold check,
-   refine from extended RaBitQ codes, and update per-query top-k and thresholds.
-   Completed chunks clear their slots and advance the contiguous released prefix.
-5. The driver gathers IDs, applies the recall evaluator outside search
-   timing, and prints per-round measurements and the final table.
+1. The driver reads queries, ground truth and the IVF index. `SearchData` adapts
+   packed codes, factors, centroids and IDs to the GPU/CPU layout before timing.
+2. `coraanns::HybridIndex` prepares queries and selects probe lists. Pair
+   scheduling prioritizes vanguard clusters to establish useful thresholds early.
+3. GPU kernels filter candidates and reuse query-independent work across queries.
+4. CPU workers apply secondary filtering, refine extended RaBitQ codes and update
+   each query's top-k and shared threshold while GPU filtering continues.
+5. The driver gathers IDs and measures recall outside the search timer.
 
-The CPU worker implementation is shared by the search library and GPU
-correctness tests. The driver handles packed-index adaptation and owns the
-host arrays used by the engine.
+## Interfaces and ownership
 
-## Other implementations
+`HybridIndex` owns its GPU allocations, streams and workspace. It cannot be copied
+or moved. `load_from_raw_pointers()` copies the short index to GPU memory and
+borrows host extended codes, factors and IDs. Keep their owners alive until the
+engine is destroyed. The CLI holds these arrays in `index::SearchData` and the
+loaded RaBitQ IVF object.
 
-`apps/baselines/cpu.cpp` uses the parallel CPU RaBitQ search. The GPU baseline
-is split between `apps/baselines/gpu.cpp`, its interface, and
-`src/baselines/gpu.cu`. It supports host-excode, HBM, cache, and tiled-kernel
-options.
+`prepare_workspace()` sets query, top-k, probe and vanguard capacity. Searches
+check these limits before submitting GPU work. The CLI splits queries into
+chunks of at most 65,535; probe count is at most 65,536 and must fit the selected
+index. Reprepare the workspace before increasing a capacity. One engine instance
+serves one search at a time.
 
-`experimental/` contains CPU-filter/GPU-refinement, global GPU, asymmetric
-two-phase, and backlog-tracing variants. Build them with
-`CORAANNS_BUILD_EXPERIMENTAL=ON` and run their individual executables. Shared
-mechanism options are in `include/coraanns/benchmark/mechanism_options.hpp`.
+The vendored IVF interface exposes read-only metadata, clusters, IDs and rotation
+serialization. Extended-code ownership transfers explicitly to `SearchData` for
+bounded in-place compaction. No command driver changes C++ access specifiers.
+
+## Baselines and experiments
+
+The GPU baseline is `coraanns::baselines::GpuIndex`. Optional implementations use
+separate `coraanns::experimental::{cpu_gpu,gpu_global,asymmetric,backlog_trace}`
+namespaces. Their public headers can be included together. Build experimental
+executables with `CORAANNS_BUILD_EXPERIMENTAL=ON`; run them individually.
+
+The CPU baseline uses RaBitQ's parallel CPU search. Shared benchmark options are
+in `include/coraanns/benchmark/`.

@@ -37,9 +37,7 @@ requires at least `topk` ground-truth neighbors per query.
 The training interface uses `faiss.index_factory`
 with `IVF<nlist>,Flat`, `index.train(base)`, centroid reconstruction, then a
 one-nearest-centroid assignment for each vector, with Faiss's default clustering
-settings. The positional interface is available as
-`tools/data/train_ivf_legacy.py`. Record the Faiss version with your experiment
-environment.
+settings. Record the Faiss version with your experiment environment.
 
 Example for LAION100M:
 
@@ -78,10 +76,8 @@ files and executables, then creates a new results directory. Choose a fresh
 path for `--output-dir`. Failed jobs keep their logs and exit status in the
 results directory.
 
-Use `--queue-capacity` and `--queue-spill-capacity` to select host-ring and HBM
-spill capacities in records. The configuration defaults are 67,108,864 and
-16,777,216 respectively. See [queue validation](RING_QUEUE.md) for paired QPS
-comparisons.
+The hybrid CLI caps each query chunk at 65,535 and splits larger query sets
+automatically. `--nprobes` values must not exceed 65,536 or the index cluster count.
 
 | Sweep | Systems or varied parameter |
 | --- | --- |
@@ -143,8 +139,8 @@ false, which evaluates recall for each measured round.
 ## Saved outputs
 
 - `commands.sh`: exact executable arguments and relevant environment settings.
-- `metadata.json`: resolved configuration, input file sizes/mtimes, environment,
-  import-manifest hash, job return codes, and completion/failure state.
+- `metadata.json`: resolved configuration, executable SHA-256 fingerprints,
+  input file sizes/mtimes, environment, job return codes, and completion/failure state.
 - One raw `.log` per system or parameter setting.
 - `summary.csv`: dataset, experiment, job, top-k, nprobe, QPS, recall, recall
   mode, and source log; completed jobs are retained if a later job fails.

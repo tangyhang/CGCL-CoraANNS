@@ -23,12 +23,10 @@ struct ExperimentOptions {
     bool profile;
     std::filesystem::path output_dir;
 
-    ExperimentOptions(int argc, char** argv, std::size_t default_vanguard)
-        : cli(argc, argv,
-              argc > 4 && !starts_with_option(argv[4]) ? 5 : 4) {
-        cli.require_known({"topk", "nprobes", "rounds", "warmup", "batch-q",
-                           "threads", "vanguard-size", "cpu-secondary-filter",
-                           "profile", "output-dir"});
+    ExperimentOptions(int argc, char **argv, std::size_t default_vanguard)
+        : cli(argc, argv, argc > 4 && !starts_with_option(argv[4]) ? 5 : 4) {
+        cli.require_known({"topk", "nprobes", "rounds", "warmup", "batch-q", "threads",
+                           "vanguard-size", "cpu-secondary-filter", "profile", "output-dir"});
         std::size_t legacy_topk = 100;
         if (argc > 4 && !starts_with_option(argv[4])) {
             if (argc != 5) {
@@ -37,8 +35,7 @@ struct ExperimentOptions {
             const std::string value = argv[4];
             std::size_t consumed = 0;
             legacy_topk = std::stoull(value, &consumed);
-            if (value.empty() || value[0] == '-' || value[0] == '+' ||
-                consumed != value.size()) {
+            if (value.empty() || value[0] == '-' || value[0] == '+' || consumed != value.size()) {
                 throw std::invalid_argument("Invalid positional topk");
             }
         }
@@ -54,8 +51,7 @@ struct ExperimentOptions {
         if (batch < 1 || batch > 6) {
             throw std::invalid_argument("batch-q must be in [1, 6]");
         }
-        if (workers == 0 || workers > static_cast<std::size_t>(
-                                         std::numeric_limits<int>::max())) {
+        if (workers == 0 || workers > static_cast<std::size_t>(std::numeric_limits<int>::max())) {
             throw std::invalid_argument("threads must be a positive int");
         }
         batch_q = static_cast<int>(batch);
@@ -63,11 +59,11 @@ struct ExperimentOptions {
         cpu_secondary_filter = cli.get_bool("cpu-secondary-filter", true);
         profile = cli.get_bool("profile", false);
         output_dir = cli.get("output-dir", ".");
-        if (output_dir.empty()) throw std::invalid_argument("output-dir must not be empty");
+        if (output_dir.empty())
+            throw std::invalid_argument("output-dir must not be empty");
     }
 
-    template <typename Index>
-    void configure(Index& index) const {
+    template <typename Index> void configure(Index &index) const {
         omp_set_dynamic(0);
         omp_set_num_threads(threads);
         index.set_vanguard_size(vanguard_size);
@@ -76,7 +72,7 @@ struct ExperimentOptions {
         std::filesystem::create_directories(output_dir);
     }
 
-    void print(const char* name, const std::vector<std::size_t>& nprobes) const {
+    void print(const char *name, const std::vector<std::size_t> &nprobes) const {
         std::cout << "Algorithm: " << name << '\n'
                   << "topk: " << topk << '\n'
                   << "rounds: " << rounds << '\n'
@@ -91,7 +87,7 @@ struct ExperimentOptions {
     }
 };
 
-inline void print_experiment_usage(const char* program) {
+inline void print_experiment_usage(const char *program) {
     std::cerr << "Usage: " << program << " <index_file> <query_file> <gt_file>"
               << " [--topk 100] [--nprobes 123] [--rounds 1] [--warmup 1]"
               << " [--batch-q 4] [--threads 72] [--vanguard-size N]"
@@ -99,4 +95,4 @@ inline void print_experiment_usage(const char* program) {
               << " [--output-dir .] [--recall-base FILE]\n";
 }
 
-}  // namespace rabitq_benchmark
+} // namespace rabitq_benchmark

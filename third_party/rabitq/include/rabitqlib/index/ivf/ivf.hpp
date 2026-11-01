@@ -171,6 +171,8 @@ class IVF {
     );
 
     ~IVF();
+    IVF(const IVF&) = delete;
+    IVF& operator=(const IVF&) = delete;
 
     void construct(const float*, const float*, const PID*, bool);
 
@@ -198,6 +200,22 @@ class IVF {
     [[nodiscard]] MetricType metric_type() const { return this->metric_type_; }
 
     [[nodiscard]] size_t num_clusters() const { return this->num_cluster_; }
+
+    [[nodiscard]] size_t num_vectors() const { return num_; }
+    [[nodiscard]] size_t ex_bits() const { return ex_bits_; }
+    [[nodiscard]] const std::vector<Cluster>& clusters() const { return cluster_lst_; }
+    [[nodiscard]] const PID* ids() const { return ids_; }
+    [[nodiscard]] const float* centroid(size_t i) const { return initer_->centroid(i); }
+    void save_rotator(char* output) const { rotator_->save(output); }
+
+    // Transfer the aligned allocation to an adapter; the caller frees it with free().
+    // After transfer this IVF instance is used only for its metadata and short codes.
+    [[nodiscard]] char* release_extended_data() {
+        char* data = ex_data_;
+        ex_data_ = nullptr;
+        return data;
+    }
+
 };
 
 inline IVF::IVF(

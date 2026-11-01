@@ -11,10 +11,7 @@ CoraANNS 是基于 IVF-RaBitQ 的近似最近邻搜索系统，结合 GPU 过滤
 | 依赖、CPU/CUDA 构建、可选目标 | [构建说明](docs/BUILD.md) |
 | 数据格式、训练、实验配置、recall 口径 | [复现说明](docs/REPRODUCIBILITY.md) |
 | 系统模块与代码定位 | [结构说明](docs/ARCHITECTURE.md) |
-| 环形队列机制、容量配置与 QPS 验证 | [环形队列](docs/RING_QUEUE.md) |
-| 新旧项目基线与环形队列实测 | [验证报告](docs/RING_QUEUE_VALIDATION.zh-CN.md) |
-| 原文件到新文件的对应关系 | [迁移说明](docs/MIGRATION.md) |
-| 补充材料提交与发布准备 | [开源提交要求](docs/ARTIFACT_REQUIREMENTS.zh-CN.md) |
+| 测试内容与运行方法 | [测试说明](tests/README.md) |
 
 目录按职责划分：`apps/` 放命令行入口，`src/` 放计算实现，
 `include/coraanns/` 放接口与共享实验工具，`configs/` 放参数，
@@ -42,4 +39,3 @@ python3 tools/run_experiment.py \
 结果中记录所用的评估模式。
 
 项目采用 Apache 2.0 许可证，依赖归属见 [第三方声明](THIRD_PARTY_NOTICES.md)。
-源码对应关系和哈希记录在 `docs/import_manifest.json`。

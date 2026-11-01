@@ -6,6 +6,8 @@
 #include <immintrin.h>
 #include <iostream>
 #include <limits>
+#include <memory>
+#include <new>
 #include <queue>
 #include <threads.h>
 #include <vector>
@@ -17,6 +19,11 @@
 #include "rabitqlib/utils/tools.hpp"
 #include "coraanns/search/hybrid.cuh"
 #include "coraanns/queue/release_tracker.hpp"
+
+#include "kernel_types.cuh"
+
+namespace coraanns {
+using namespace detail;
 
 namespace {
 inline GlobalTaskItem load_task_relaxed(const GlobalTaskItem *item) {
@@ -48,15 +55,21 @@ inline void clear_tasks_relaxed(GlobalTaskItem *items, QueueIndex count) {
 
 } // namespace
 
-void IVF_RaBitQ_Raw::capture_thresholds(float *out, size_t nq) const {
+void HybridIndex::capture_thresholds(float *out, size_t nq) const {
+    validate_workspace(nq, 1, 1);
+    if (!out)
+        throw std::invalid_argument("missing threshold output");
     std::memcpy(out, h_dynamic_thresholds, nq * sizeof(float));
 }
-void IVF_RaBitQ_Raw::seed_thresholds(const float *in, size_t nq) {
+void HybridIndex::seed_thresholds(const float *in, size_t nq) {
+    validate_workspace(nq, 1, 1);
+    if (!in)
+        throw std::invalid_argument("missing threshold input");
     std::memcpy(h_dynamic_thresholds, in, nq * sizeof(float));
 }
 
-void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries, size_t topk,
-                                      int nprobe, float *h_final_dists, uint32_t *h_final_pids) {
+void HybridIndex::cpu_exact_rerank(const float *h_queries, size_t num_queries, size_t topk,
+                                   int nprobe, float *h_final_dists, uint32_t *h_final_pids) {
     size_t LC_SIZE = (padded_dim * ex_bits + 7) / 8;
     rabitqlib::ex_ipfunc ip_func = rabitqlib::select_excode_ipfunc(ex_bits);
     const bool use_exact_refine = h_exact_base_mapping != nullptr;
@@ -64,13 +77,22 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
     std::atomic<uint64_t> g_cyc_read(0), g_cyc_ip(0), g_cyc_heap(0);
 
     const size_t kstride = ((topk + 15) / 16) * 16;
-    float *topk_dist = (float *)aligned_alloc(64, num_queries * kstride * sizeof(float));
-    uint32_t *topk_pid = (uint32_t *)aligned_alloc(64, num_queries * kstride * sizeof(uint32_t));
+    using FloatStorage = std::unique_ptr<float, decltype(&std::free)>;
+    using IdStorage = std::unique_ptr<uint32_t, decltype(&std::free)>;
+    FloatStorage distances((float *)aligned_alloc(64, num_queries * kstride * sizeof(float)),
+                           &std::free);
+    IdStorage ids((uint32_t *)aligned_alloc(64, num_queries * kstride * sizeof(uint32_t)),
+                  &std::free);
+    if (!distances || !ids)
+        throw std::bad_alloc();
+    float *topk_dist = distances.get();
+    uint32_t *topk_pid = ids.get();
     struct alignas(64) QSlot {
         std::atomic<bool> lock;
         int cnt;
     };
-    QSlot *slots = (QSlot *)aligned_alloc(64, num_queries * sizeof(QSlot));
+    auto slot_storage = std::make_unique<QSlot[]>(num_queries);
+    QSlot *slots = slot_storage.get();
     for (size_t i = 0; i < num_queries; ++i) {
         slots[i].lock.store(false);
         slots[i].cnt = 0;
@@ -259,7 +281,6 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
             h_final_pids[base + i] = 0;
         }
     }
-    std::free(slots);
-    std::free(topk_pid);
-    std::free(topk_dist);
 }
+
+} // namespace coraanns

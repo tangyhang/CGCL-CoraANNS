@@ -1,8 +1,7 @@
 # Third-party notices
 
 CoraANNS builds on the RaBitQ library. Its source snapshot comes from
-CPU-GPU-IVF-RabitQ at HEAD `14d844154606a901c0c6b58940fcffe2fb32a09f`, with
-file-level SHA-256 records in `docs/import_manifest.json`.
+CPU-GPU-IVF-RabitQ at commit `14d844154606a901c0c6b58940fcffe2fb32a09f`.
 
 The root license is Apache 2.0. The RaBitQ dependency, its license, and its
 upstream README are under `third_party/rabitq/`.
@@ -21,3 +20,8 @@ optional PyTorch.
 The original RaBitQ README credits Yutong Gou, Jianyang Gao, Yuexuan Xu, Jifan
 Shi, and Zhonghao Yang. See the upstream README for its acknowledgments and
 research references.
+
+Local RaBitQ integration changes expose read-only IVF metadata and packed-cluster
+access, rotation serialization, and an explicit extended-code ownership transfer.
+The owning IVF type is noncopyable. These accessors preserve the serialized index
+layout and numerical kernels.

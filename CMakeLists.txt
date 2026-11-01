@@ -23,7 +23,7 @@ target_include_directories(coraanns_host INTERFACE "${PROJECT_SOURCE_DIR}/includ
 target_include_directories(coraanns_host SYSTEM INTERFACE
     "${PROJECT_SOURCE_DIR}/third_party/rabitq/include")
 target_link_libraries(coraanns_host INTERFACE OpenMP::OpenMP_CXX)
-# Retain the original numerical and CPU ISA settings. Keep flags target-local.
+# Numerical and CPU ISA flags are target-local.
 target_compile_options(coraanns_host INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-mavx2;-mfma;-mbmi2;-fPIC;-fexceptions;-ftree-vectorize>
     $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:Release>>:-Ofast>)
@@ -70,17 +70,20 @@ if(CORAANNS_ENABLE_CUDA)
     add_executable(coraanns_build_index_gpu apps/build_index_gpu.cpp)
     target_link_libraries(coraanns_build_index_gpu PRIVATE coraanns_index_gpu)
 
+    add_library(coraanns_index_data STATIC src/index/search_data.cpp)
+    target_link_libraries(coraanns_index_data PUBLIC coraanns_host)
+
     function(coraanns_add_search library command)
         add_library(${library} STATIC ${ARGN}
             src/search/hybrid.cu src/search/cpu_refinement.cpp)
         target_link_libraries(${library} PUBLIC coraanns_cuda Threads::Threads atomic)
         add_executable(${command} ${ARGN} apps/search.cpp)
-        target_link_libraries(${command} PRIVATE ${library})
+        target_link_libraries(${command} PRIVATE ${library} coraanns_index_data)
     endfunction()
     coraanns_add_search(coraanns coraanns_search)
-    # Capacity-only variant; leave the original 512-entry build unchanged.
+    # Compile a separate 1024-entry vanguard specialization.
     coraanns_add_search(coraanns_highk coraanns_search_highk EXCLUDE_FROM_ALL)
-    target_compile_definitions(coraanns_highk PUBLIC RABITQ_VANGUARD_CAPACITY=1024)
+    target_compile_definitions(coraanns_highk PUBLIC CORAANNS_VANGUARD_CAPACITY=1024)
 
     if(CORAANNS_BUILD_BASELINES)
         add_library(rabitq_gpu_kernels STATIC src/baselines/gpu.cu)

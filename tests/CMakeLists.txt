@@ -1,5 +1,5 @@
 # Standalone tests avoid downloads and keep assert() enabled in Release builds.
-foreach(test experiment_options_test recall_evaluator_test ring_release_tracker_test)
+foreach(test experiment_options_test recall_evaluator_test ring_release_tracker_test search_parameters_test)
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} PRIVATE coraanns_host Threads::Threads)
     target_compile_options(${test} PRIVATE -UNDEBUG)
@@ -25,7 +25,25 @@ if(Python3_Interpreter_FOUND AND CORAANNS_BUILD_BASELINES)
         ENVIRONMENT "OMP_NUM_THREADS=2;OPENBLAS_NUM_THREADS=2")
 endif()
 
+if(CORAANNS_ENABLE_CUDA)
+    add_executable(public_interfaces_test public_interfaces_test.cpp)
+    target_link_libraries(public_interfaces_test PRIVATE coraanns_cuda_base)
+    add_test(NAME public_interfaces_test COMMAND public_interfaces_test)
+    set_tests_properties(public_interfaces_test PROPERTIES LABELS cpu)
+endif()
+
 if(CORAANNS_BUILD_GPU_TESTS)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME gpu_pipeline COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/smoke_gpu.py"
+            --indexers $<TARGET_FILE:coraanns_build_index> $<TARGET_FILE:coraanns_build_index_gpu>
+            --search $<TARGET_FILE:coraanns_search>)
+        set_tests_properties(gpu_pipeline PROPERTIES LABELS gpu TIMEOUT 120)
+    endif()
+    add_executable(gpu_search_lifecycle_test gpu_search_lifecycle_test.cpp)
+    target_link_libraries(gpu_search_lifecycle_test PRIVATE coraanns)
+    add_test(NAME gpu_search_lifecycle_test COMMAND gpu_search_lifecycle_test)
+    set_tests_properties(gpu_search_lifecycle_test PROPERTIES LABELS gpu TIMEOUT 60)
     add_executable(gpu_cpu_ring_queue_test gpu_cpu_ring_queue_test.cpp)
     target_link_libraries(gpu_cpu_ring_queue_test PRIVATE coraanns)
     add_test(NAME gpu_cpu_ring_queue_test COMMAND gpu_cpu_ring_queue_test)

@@ -41,6 +41,8 @@ def main():
     parser.add_argument("--queue-capacity", type=ring_capacity, default=1 << 24)
     parser.add_argument("--queue-spill-capacity", type=nonnegative, default=1 << 24)
     parser.add_argument("--recall-mode", choices=["distance-aware", "id"], default="distance-aware")
+    parser.add_argument("--baseline-queue", choices=["linear", "ring"], default="linear",
+                        help="candidate transport supported by the baseline executable")
     parser.add_argument("--linear-after", action="store_true", help="compare two linear implementations")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -62,7 +64,7 @@ def main():
                    "--gpu-filter-timing", "false", "--recall-once", "true"]
         if args.recall_mode == "distance-aware":
             command += ["--recall-base", str(files["base"])]
-        if version == "b" and not args.linear_after:
+        if (version == "b" and not args.linear_after) or (version == "a" and args.baseline_queue == "ring"):
             command += ["--queue-capacity", str(args.queue_capacity),
                         "--queue-spill-capacity", str(args.queue_spill_capacity)]
         jobs.append(dict(label=label, command=command))
@@ -79,6 +81,7 @@ def main():
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
     metadata = dict(status="running", dataset=args.dataset, settings=settings,
+                    baseline_queue=args.baseline_queue,
                     recall_mode=args.recall_mode, jobs=jobs,
                     environment={key: env[key] for key in env_keys},
                     binaries={key: dict(path=str(path), sha256=sha256(path)) for key, path in binaries.items()},

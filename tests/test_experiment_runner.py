@@ -1,5 +1,6 @@
 """Exercise result provenance and failure handling without a GPU or datasets."""
 import csv
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -57,6 +58,10 @@ class RunnerIntegrationTest(unittest.TestCase):
         output = self.root / "result"
         metadata = json.loads((output / "metadata.json").read_text())
         self.assertEqual(metadata["status"], "complete")
+        binary = self.root / "bin/coraanns_search"
+        self.assertEqual(metadata["executables"]["coraanns_search"]["sha256"],
+                         hashlib.sha256(binary.read_bytes()).hexdigest())
+        self.assertEqual(metadata["executables"]["coraanns_search"]["path"], str(binary))
         self.assertTrue(all(job["returncode"] == 0 for job in metadata["jobs"]))
         command = metadata["jobs"][0]["command"]
         self.assertEqual(command[command.index("--queue-capacity") + 1], "4096")
