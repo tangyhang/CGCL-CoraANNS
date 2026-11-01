@@ -58,10 +58,6 @@ build includes `coraanns_build_index`, `coraanns_build_index_gpu`,
 The demo requires NumPy and Faiss in addition to the C++ build. It generates
 4,096 vectors, trains IVF with Faiss, builds an 8-bit RaBitQ index, and searches it.
 
-The hybrid engine allocates a fixed mapped candidate queue of 16 GB
-(about 14.9 GiB) of pinned host memory. The CPU example below uses the CPU
-RaBitQ search path.
-
 ```bash
 python3 tools/data/make_demo.py --output data/demo
 python3 tools/data/train_ivf.py \
