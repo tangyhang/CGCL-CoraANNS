@@ -7,6 +7,7 @@
 #include <atomic>
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
+#include "coraanns/queue/candidate_queue.hpp"
 
 static constexpr int WARP_SIZE = 32;
 constexpr size_t FAST_SIZE = 32;
@@ -23,7 +24,7 @@ using T = float;
 using IdxT = uint32_t;
 typedef uint32_t PID;
 
-// Probe scheduling retains vanguard-first ordering, then cluster/probe/query order.
+// Schedule vanguard pairs first, then ordinary pairs by cluster/probe/query.
 struct ClusterQueryPair {
     int cluster_idx;
     int query_idx;
@@ -39,19 +40,13 @@ struct ClusterBatchTask {
     int probe_indices[BATCH_Q];
 };
 
-// Shared candidate payload; preserve its binary layout and publication protocol.
-struct alignas(16) GlobalTaskItem {
-    uint16_t query_idx;
-    uint16_t probe_idx;
-    uint32_t gid;
-    float exact_ip;
-    float low_dist;
-};
-
-#define GLOBAL_ASYNC_BUFFER_SIZE 1000000000
-struct GlobalAsyncBuffer {
-    GlobalTaskItem items[GLOBAL_ASYNC_BUFFER_SIZE];
-};
+using GlobalTaskItem = coraanns::queue::Candidate;
+using QueueIndex = coraanns::queue::Position;
+using SpillTaskItem = coraanns::queue::SpillRecord;
+using GlobalAsyncBuffer = coraanns::queue::Descriptor;
+constexpr size_t DEFAULT_QUEUE_CAPACITY = coraanns::queue::default_capacity;
+constexpr size_t DEFAULT_QUEUE_SPILL_CAPACITY = coraanns::queue::default_spill_capacity;
+constexpr size_t QUEUE_CONSUMER_CHUNK = coraanns::queue::consumer_chunk;
 
 struct PairSortCompare {
     size_t vanguard_size;
@@ -124,7 +119,6 @@ struct ComputeBitwiseKernelParams {
     int topk;
 };
 
-// Production hybrid engine. Historical type and member names are kept for compatibility.
 class IVF_RaBitQ_Raw {
   private:
     cublasHandle_t cublas_handle;
@@ -205,20 +199,22 @@ class IVF_RaBitQ_Raw {
     float *ws_d_q_min = nullptr;
 
     GlobalAsyncBuffer *h_global_buffer = nullptr;
-    GlobalAsyncBuffer *d_global_buffer = nullptr;
+    GlobalAsyncBuffer d_global_buffer{};
 
-    int *d_vram_write_count = nullptr;
+    QueueIndex *d_vram_write_count = nullptr;
 
-    int *h_global_write_count = nullptr;
-    int *d_global_write_count = nullptr;
+    QueueIndex *h_global_write_count = nullptr;
     int *h_gpu_done = nullptr;
-    int *d_gpu_done = nullptr;
     float *h_dynamic_thresholds = nullptr;
     float *d_dynamic_thresholds = nullptr;
 
     int *d_global_pair_counter = nullptr;
 
-    int last_written_count = 0;
+    size_t queue_capacity_ = DEFAULT_QUEUE_CAPACITY;
+    size_t queue_spill_capacity_ = DEFAULT_QUEUE_SPILL_CAPACITY;
+    coraanns::queue::Progress *h_queue_progress = nullptr;
+    QueueIndex last_written_count = 0;
+    QueueIndex last_spilled_count_ = 0;
     size_t last_refined_count_ = 0;
     float last_gpu_filter_ms_ = 0.0f;
 
@@ -247,8 +243,16 @@ class IVF_RaBitQ_Raw {
         cpu_secondary_filter_enabled_ = enabled;
     }
 
-    int get_last_submitted_count() const {
+    QueueIndex get_last_submitted_count() const {
         return last_written_count;
+    }
+    QueueIndex get_last_spilled_count() const {
+        return last_spilled_count_;
+    }
+    void set_queue_capacity(size_t capacity);
+    void set_queue_spill_capacity(size_t capacity);
+    size_t get_queue_capacity() const {
+        return queue_capacity_;
     }
     size_t get_last_refined_count() const {
         return last_refined_count_;
@@ -298,4 +302,8 @@ class IVF_RaBitQ_Raw {
 
     void search(const float *h_queries, size_t num_queries, size_t topk, size_t nprobe,
                 float *h_final_dists, uint32_t *h_final_pids, int batch_q = BATCH_Q);
+
+  private:
+    void allocate_candidate_queue();
+    void release_candidate_queue();
 };

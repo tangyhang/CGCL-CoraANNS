@@ -11,6 +11,8 @@ CoraANNS 是基于 IVF-RaBitQ 的近似最近邻搜索系统，结合 GPU 过滤
 | 依赖、CPU/CUDA 构建、可选目标 | [构建说明](docs/BUILD.md) |
 | 数据格式、训练、实验配置、recall 口径 | [复现说明](docs/REPRODUCIBILITY.md) |
 | 系统模块与代码定位 | [结构说明](docs/ARCHITECTURE.md) |
+| 环形队列机制、容量配置与 QPS 验证 | [环形队列](docs/RING_QUEUE.md) |
+| 新旧项目基线与环形队列实测 | [验证报告](docs/RING_QUEUE_VALIDATION.zh-CN.md) |
 | 原文件到新文件的对应关系 | [迁移说明](docs/MIGRATION.md) |
 | 补充材料提交与发布准备 | [开源提交要求](docs/ARTIFACT_REQUIREMENTS.zh-CN.md) |
 

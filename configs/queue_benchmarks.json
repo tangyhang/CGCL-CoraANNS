@@ -1,0 +1,35 @@
+{
+  "deep100m": {
+    "files": {
+      "index": "deep100m_ivf_65536_B8_gpu.index",
+      "queries": "deep100m_query.fvecs",
+      "groundtruth": "deep100m_gt.ivecs",
+      "base": "deep100m_base.fvecs"
+    },
+    "nprobes": "34,112,320,640",
+    "query_chunk": 10000,
+    "require_wrap": true
+  },
+  "wiki88m": {
+    "files": {
+      "index": "ivf_65536_8_gpu.index",
+      "queries": "queries.fbin",
+      "groundtruth": "groundtruth.88M.neighbors.ibin",
+      "base": "base.88M.fbin"
+    },
+    "nprobes": "32,200,400,750,1024",
+    "query_chunk": 10000,
+    "require_wrap": false
+  },
+  "laion100m": {
+    "files": {
+      "index": "ivf_65536_8_gpu.index",
+      "queries": "laion-768d_query.fbin",
+      "groundtruth": "laion100m_gt.ivecs",
+      "base": "laion100m-768d_base.fbin"
+    },
+    "nprobes": "80,320,1000,3200",
+    "query_chunk": 1000,
+    "require_wrap": false
+  }
+}

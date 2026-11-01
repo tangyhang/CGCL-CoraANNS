@@ -45,6 +45,7 @@ void print_usage(const char *program) {
                  " [--topk 100] [--nprobes 40,50,...] [--rounds 5]"
                  " [--warmup 1] [--batch-q 4] [--query-chunk N] [--threads N]"
                  " [--vanguard-size 5] [--cpu-secondary-filter true]"
+                 " [--queue-capacity 67108864] [--queue-spill-capacity 16777216]"
                  " [--cross-query-reuse true] [--candidate-stats false]"
                  " [--gpu-filter-timing false] [--profile false]"
                  " [--exact-base FILE] [--recall-base FILE] [--recall-once false]\n";
@@ -110,9 +111,6 @@ class ExactBaseMMap {
             }
         }
 
-        // Candidate pids are effectively random with respect to the original
-        // base layout.  Avoid aggressive sequential readahead for the 100M
-        // diagnostic dataset.
         ::madvise(const_cast<uint8_t *>(mapping_), mapping_bytes_, MADV_RANDOM);
     }
 
@@ -209,8 +207,6 @@ int main(int argc, char **argv) {
         std::string query_file = argv[2];
         std::string gt_file = argv[3];
 
-        // Preserve the historical positional form: [topk] [batch_q]
-        // [exact_base_file]. New experiment scripts should use named options.
         const bool legacy_mode = argc > 4 && !rabitq_benchmark::starts_with_option(argv[4]);
         std::size_t option_begin = 4;
         int batch_q = 4;
@@ -235,7 +231,8 @@ int main(int argc, char **argv) {
         options.require_known({"topk", "nprobes", "rounds", "warmup", "batch-q", "threads",
                                "query-chunk", "vanguard-size", "cpu-secondary-filter", "profile",
                                "cross-query-reuse", "candidate-stats", "gpu-filter-timing",
-                               "exact-base", "recall-once"});
+                               "exact-base", "recall-once", "queue-capacity",
+                               "queue-spill-capacity"});
         topk = options.get_size("topk", topk);
         const size_t test_round = options.get_size("rounds", 5);
         const size_t warmup_rounds = options.get_size("warmup", 1);
@@ -260,6 +257,16 @@ int main(int argc, char **argv) {
         const bool gpu_filter_timing = options.get_bool("gpu-filter-timing", false);
         const bool cross_query_reuse = options.get_bool("cross-query-reuse", true);
         const bool cpu_secondary_filter = options.get_bool("cpu-secondary-filter", true);
+        const size_t queue_capacity = options.get_size("queue-capacity", DEFAULT_QUEUE_CAPACITY);
+        const size_t queue_spill_capacity =
+            options.get_size("queue-spill-capacity", DEFAULT_QUEUE_SPILL_CAPACITY);
+        if (queue_capacity == 0 || (queue_capacity & (queue_capacity - 1)) != 0) {
+            throw std::invalid_argument("queue-capacity must be a positive power of two");
+        }
+        if (queue_capacity > SIZE_MAX / sizeof(GlobalTaskItem) ||
+            queue_spill_capacity > SIZE_MAX / sizeof(SpillTaskItem)) {
+            throw std::invalid_argument("queue allocation size exceeds address space");
+        }
         exact_base_file = options.get("exact-base", exact_base_file);
 
         std::cout << "Loading queries and groundtruth..." << std::endl;
@@ -281,8 +288,8 @@ int main(int argc, char **argv) {
         std::cout << "Initializing GPU Index..." << std::endl;
         rabitqlib::ivf::IVF cpu_ivf;
         cpu_ivf.load(index_file.c_str());
-        // In once mode even evaluator construction is deferred: computing the GT
-        // distance thresholds reads base vectors and must not precede QPS rounds.
+
+        // In once mode, base reads for recall start after all timed searches.
         std::unique_ptr<recall_eval::Evaluator> recall_evaluator;
         if (!recall_once) {
             recall_evaluator = std::make_unique<recall_eval::Evaluator>(
@@ -391,14 +398,9 @@ int main(int argc, char **argv) {
             global_vec_idx += n;
         }
 
-        // Preserve the original query path and its contiguous long-code layout,
-        // but avoid allocating a second full-size code array.  Save the two
-        // factors, then compact the existing interleaved ExDataMap allocation in
-        // place using a bounded staging chunk.  For Wiki-88M this removes the
-        // roughly 59 GiB duplicate while adding only ~0.66 GiB of factors and a
-        // 192 MiB staging buffer during initialization.
         uint8_t *host_long_codes = nullptr;
         if (!exact_base) {
+            // Compact interleaved codes in place with bounded staging storage.
             const size_t ex_stride = rabitqlib::ExDataMap<float>::data_bytes(padded_dim, ex_bits);
             if (long_code_size == 0 || ex_stride < long_code_size + 2 * sizeof(float) ||
                 cpu_ivf.ex_data_ == nullptr) {
@@ -471,6 +473,8 @@ int main(int argc, char **argv) {
 
         std::cout << "Allocating GPU Workspace pool..." << std::endl;
         const size_t max_nprobe = *std::max_element(nprobes.begin(), nprobes.end());
+        gpu_ivf.set_queue_capacity(queue_capacity);
+        gpu_ivf.set_queue_spill_capacity(queue_spill_capacity);
         gpu_ivf.prepare_workspace(query_chunk, topk, max_nprobe);
 
         std::cout << "Algorithm: CoraANN (GPU filtering + CPU refinement)\n"
@@ -478,6 +482,8 @@ int main(int argc, char **argv) {
                   << "batch_q: " << batch_q << "\n"
                   << "query_chunk: " << query_chunk << "\n"
                   << "cpu_threads: " << cpu_threads << "\n"
+                  << "queue_capacity: " << queue_capacity << "\n"
+                  << "queue_spill_capacity: " << queue_spill_capacity << "\n"
                   << "vanguard_size: " << vanguard_size << "\n"
                   << "cpu_secondary_filter: " << (cpu_secondary_filter ? "true" : "false") << "\n"
                   << "cross_query_reuse: " << (cross_query_reuse ? "true" : "false") << "\n"
@@ -506,6 +512,8 @@ int main(int argc, char **argv) {
         struct SearchStats {
             uint64_t submitted = 0;
             uint64_t actual_refined = 0;
+            uint64_t spilled = 0;
+            uint64_t wraps = 0;
             double gpu_filter_ms = 0.0;
         };
         auto search_all_queries = [&](size_t nprobe) {
@@ -521,6 +529,9 @@ int main(int argc, char **argv) {
                 stats.submitted += static_cast<uint64_t>(gpu_ivf.get_last_submitted_count());
                 stats.actual_refined += static_cast<uint64_t>(gpu_ivf.get_last_refined_count());
                 stats.gpu_filter_ms += gpu_ivf.get_last_gpu_filter_ms();
+                stats.spilled += gpu_ivf.get_last_spilled_count();
+                const auto submitted = gpu_ivf.get_last_submitted_count();
+                stats.wraps += submitted == 0 ? 0 : (submitted - 1) / queue_capacity;
             }
             return stats;
         };
@@ -539,8 +550,7 @@ int main(int argc, char **argv) {
 
                 all_qps[r][l] = static_cast<float>(nq) / (total_time / 1e6F);
                 if (recall_once) {
-                    // Preserve the first measured search, outside its timer. No
-                    // base reads or recall worker pool run between QPS rounds.
+                    // Save first-round results outside the search timer.
                     if (r == 0) {
                         std::copy(results_pids.begin(), results_pids.end(),
                                   recall_results[l].begin());
@@ -555,6 +565,11 @@ int main(int argc, char **argv) {
                 } else {
                     std::cout << " recall=" << all_recall[r][l] << '\n';
                 }
+                std::printf(
+                    "[QueueStats] round=%zu nprobe=%zu submitted=%llu spilled=%llu wraps=%llu\n",
+                    r + 1, nprobe, static_cast<unsigned long long>(stats.submitted),
+                    static_cast<unsigned long long>(stats.spilled),
+                    static_cast<unsigned long long>(stats.wraps));
                 if (candidate_stats) {
                     std::printf("[CandidateStats] round=%zu nprobe=%zu queries=%zu "
                                 "submitted=%llu actual_refined=%llu "

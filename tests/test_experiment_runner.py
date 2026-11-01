@@ -52,12 +52,17 @@ class RunnerIntegrationTest(unittest.TestCase):
                                *extra], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def test_complete_run_keeps_commands_logs_and_measured_mode(self):
-        result = self.run_driver()
+        result = self.run_driver("--queue-capacity", "4096", "--queue-spill-capacity", "0")
         self.assertEqual(result.returncode, 0, result.stderr)
         output = self.root / "result"
         metadata = json.loads((output / "metadata.json").read_text())
         self.assertEqual(metadata["status"], "complete")
         self.assertTrue(all(job["returncode"] == 0 for job in metadata["jobs"]))
+        command = metadata["jobs"][0]["command"]
+        self.assertEqual(command[command.index("--queue-capacity") + 1], "4096")
+        self.assertEqual(command[command.index("--queue-spill-capacity") + 1], "0")
+        for job in metadata["jobs"][1:]:
+            self.assertNotIn("--queue-capacity", job["command"])
         with (output / "summary.csv").open() as stream:
             rows = list(csv.DictReader(stream))
         self.assertEqual(len(rows), 6)

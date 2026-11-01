@@ -1,5 +1,3 @@
-// CPU consumer for the GPU candidate queue. Search arithmetic and synchronization
-// follow the original implementation; this file contains no command-line entry point.
 #include <algorithm>
 #include <atomic>
 #include <cfloat>
@@ -18,10 +16,37 @@
 #include "rabitqlib/utils/stopw.hpp"
 #include "rabitqlib/utils/tools.hpp"
 #include "coraanns/search/hybrid.cuh"
+#include "coraanns/queue/release_tracker.hpp"
 
-struct alignas(64) PaddedLock {
-    std::atomic<bool> flag{false};
-};
+namespace {
+inline GlobalTaskItem load_task_relaxed(const GlobalTaskItem *item) {
+    GlobalTaskItem result;
+#if defined(__x86_64__) && defined(__AVX__)
+    __m128i value;
+    asm volatile("vmovdqa %1, %0" : "=x"(value) : "m"(*item) : "memory");
+    std::memcpy(&result, &value, sizeof(result));
+#else
+    __atomic_load(item, &result, __ATOMIC_RELAXED);
+#endif
+    return result;
+}
+
+inline void clear_tasks_relaxed(GlobalTaskItem *items, QueueIndex count) {
+#if defined(__x86_64__) && defined(__AVX__)
+    const __m128i empty = _mm_set1_epi32(-1);
+    for (QueueIndex i = 0; i < count; ++i) {
+        asm volatile("vmovdqa %1, %0" : "=m"(items[i]) : "x"(empty) : "memory");
+    }
+#else
+    GlobalTaskItem empty;
+    std::memset(&empty, 0xFF, sizeof(empty));
+    for (QueueIndex i = 0; i < count; ++i) {
+        __atomic_store(items + i, &empty, __ATOMIC_RELAXED);
+    }
+#endif
+}
+
+} // namespace
 
 void IVF_RaBitQ_Raw::capture_thresholds(float *out, size_t nq) const {
     std::memcpy(out, h_dynamic_thresholds, nq * sizeof(float));
@@ -30,7 +55,6 @@ void IVF_RaBitQ_Raw::seed_thresholds(const float *in, size_t nq) {
     std::memcpy(h_dynamic_thresholds, in, nq * sizeof(float));
 }
 
-// Consume published candidates, refine distances, and update per-query top-k.
 void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries, size_t topk,
                                       int nprobe, float *h_final_dists, uint32_t *h_final_pids) {
     size_t LC_SIZE = (padded_dim * ex_bits + 7) / 8;
@@ -38,9 +62,6 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
     const bool use_exact_refine = h_exact_base_mapping != nullptr;
     std::atomic<size_t> global_total_evals(0);
     std::atomic<uint64_t> g_cyc_read(0), g_cyc_ip(0), g_cyc_heap(0);
-
-    std::atomic<double> max_spin_ms(0.0);
-    std::atomic<double> max_comp_ms(0.0);
 
     const size_t kstride = ((topk + 15) / 16) * 16;
     float *topk_dist = (float *)aligned_alloc(64, num_queries * kstride * sizeof(float));
@@ -55,57 +76,63 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
         slots[i].cnt = 0;
     }
 
-    std::atomic<int> global_read_head(0);
-
+    const QueueIndex capacity = queue_capacity_;
+    const QueueIndex mask = capacity - 1;
+    const QueueIndex chunk_size = std::min<QueueIndex>(QUEUE_CONSUMER_CHUNK, capacity);
+    std::atomic<QueueIndex> global_read_head(0);
+    coraanns::queue::ReleaseTracker released(*h_queue_progress, capacity, chunk_size);
+    auto done = [&]() { return __atomic_load_n(h_gpu_done, __ATOMIC_ACQUIRE) != 0; };
+    auto aborted = [&]() {
+        return __atomic_load_n(&h_queue_progress->overflow, __ATOMIC_ACQUIRE) != 0;
+    };
     const int thread_count = omp_get_max_threads();
 #pragma omp parallel num_threads(thread_count)
     {
         size_t local_evals = 0;
-        double local_spin = 0.0;
-        double local_comp = 0.0;
-
         uint64_t cyc_read = 0, cyc_ip = 0, cyc_heap = 0;
-
-        bool isFirst = true;
-
-        while (true) {
-
-            // Retain the original fixed-size work stealing policy.
-            int chunk_size = 8192;
-            int start_task_idx = global_read_head.fetch_add(chunk_size, std::memory_order_relaxed);
-
-            if (start_task_idx >= GLOBAL_ASYNC_BUFFER_SIZE)
+        bool stop = false;
+        while (!stop && !aborted()) {
+            const QueueIndex start_task_idx =
+                global_read_head.fetch_add(chunk_size, std::memory_order_relaxed);
+            if (done() && start_task_idx >= *h_global_write_count)
                 break;
 
-            for (int i = 0; i < chunk_size; ++i) {
-                int task_idx = start_task_idx + i;
-                if (task_idx >= GLOBAL_ASYNC_BUFFER_SIZE)
-                    break;
-
-                volatile uint32_t *p_gid = &h_global_buffer->items[task_idx].gid;
-                uint32_t gid;
-
-                int spin_count = 0;
-                // A sentinel denotes an unpublished item; GPU completion bounds the queue.
-                while (true) {
-                    gid = *p_gid;
-                    if (gid != 0xFFFFFFFF)
-                        break;
-
-                    if (*(volatile int *)h_gpu_done == 1 &&
-                        task_idx >= *(volatile int *)h_global_write_count) {
+            if (start_task_idx >= capacity) {
+                while (!released.readable_generation(start_task_idx)) {
+                    if (aborted() || (done() && start_task_idx >= *h_global_write_count)) {
+                        stop = true;
                         break;
                     }
+                    _mm_pause();
                 }
-
-                if (gid == 0xFFFFFFFF)
+            }
+            if (stop)
+                break;
+            QueueIndex copied = 0;
+            for (QueueIndex i = 0; i < chunk_size; ++i) {
+                const QueueIndex task_idx = start_task_idx + i;
+                const auto *item = &h_global_buffer->items[task_idx & mask];
+                GlobalTaskItem record;
+                while (true) {
+                    record = load_task_relaxed(item);
+                    if (record.gid != UINT32_MAX)
+                        break;
+                    if (aborted() || (done() && task_idx >= *h_global_write_count)) {
+                        stop = true;
+                        break;
+                    }
+                    _mm_pause();
+                }
+                if (stop)
                     break;
+                const uint32_t gid = record.gid;
+                const int q = record.query_idx;
+                const int p = record.probe_idx;
+                const float exact_ip = record.exact_ip;
+                const float low_dist = record.low_dist;
+                ++copied;
 
                 uint64_t r0 = profiling_enabled_ ? __rdtsc() : 0;
-                int q = h_global_buffer->items[task_idx].query_idx;
-                int p = h_global_buffer->items[task_idx].probe_idx;
-                float low_dist = h_global_buffer->items[task_idx].low_dist;
-                // Recheck the latest threshold before reading extended codes.
                 if (cpu_secondary_filter_enabled_ && low_dist >= h_dynamic_thresholds[q]) {
                     if (profiling_enabled_)
                         cyc_read += __rdtsc() - r0;
@@ -131,7 +158,6 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
                         refine_dist += diff * diff;
                     }
                 } else {
-                    const float exact_ip = h_global_buffer->items[task_idx].exact_ip;
                     const float q_g_add = h_probe_vals[q * nprobe + p];
                     const uint8_t *vec_long_code = h_long_codes_ref + gid * LC_SIZE;
                     const float ip2 =
@@ -151,7 +177,6 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
                     continue;
                 }
 
-                // Serialize each query's top-k update and publish its new threshold.
                 QSlot &s = slots[q];
                 while (s.lock.exchange(true, std::memory_order_acquire)) {
                 }
@@ -187,6 +212,11 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
                     cyc_heap += r3 - r2;
                 local_evals++;
             }
+            if (copied != 0) {
+                // Clear before returning storage; claims alone never advance Pr.
+                clear_tasks_relaxed(&h_global_buffer->items[start_task_idx & mask], chunk_size);
+                released.complete(start_task_idx);
+            }
         }
         if (profiling_enabled_ || candidate_stats_enabled_) {
             global_total_evals += local_evals;
@@ -198,7 +228,7 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
         }
     }
 
-    last_written_count = *(volatile int *)h_global_write_count;
+    last_written_count = *h_global_write_count;
     last_refined_count_ = global_total_evals.load();
 
     if (profiling_enabled_) {
@@ -207,8 +237,8 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
                tot ? 100.0 * g_cyc_read.load() / tot : 0.0,
                tot ? 100.0 * g_cyc_ip.load() / tot : 0.0,
                tot ? 100.0 * g_cyc_heap.load() / tot : 0.0);
-        printf("[Cora-Refine] candidates=%d refined=%zu refinement_ratio=%.6f\n",
-               last_written_count, global_total_evals.load(),
+        printf("[Cora-Refine] candidates=%llu refined=%zu refinement_ratio=%.6f\n",
+               static_cast<unsigned long long>(last_written_count), global_total_evals.load(),
                last_written_count ? static_cast<double>(global_total_evals.load()) /
                                         static_cast<double>(last_written_count)
                                   : 0.0);
@@ -229,4 +259,7 @@ void IVF_RaBitQ_Raw::cpu_exact_rerank(const float *h_queries, size_t num_queries
             h_final_pids[base + i] = 0;
         }
     }
+    std::free(slots);
+    std::free(topk_pid);
+    std::free(topk_dist);
 }

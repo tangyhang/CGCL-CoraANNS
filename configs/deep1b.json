@@ -19,7 +19,9 @@
     "gpu_query_chunk": 512,
     "vanguard_size": 5,
     "cpu_secondary_filter": true,
-    "cross_query_reuse": true
+    "cross_query_reuse": true,
+    "queue_capacity": 67108864,
+    "queue_spill_capacity": 16777216
   },
   "experiments": {
     "overall": {
@@ -119,9 +121,5 @@
     "ablation": "CoraANN_ablation_deep1b.sh",
     "vanguard": "CoraANN_vanguard_deep1b.sh",
     "threads": "CoraANN_threads_deep1b.sh"
-  },
-  "notes": [
-    "Overall uses the ablation nprobe grid for a consistent fresh comparison; it is not a claim to reproduce every historical spreadsheet row.",
-    "Recall is measured from this run. No historical recall values are substituted."
-  ]
+  }
 }

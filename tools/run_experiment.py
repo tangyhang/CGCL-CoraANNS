@@ -28,6 +28,20 @@ def positive(value):
     return number
 
 
+def ring_capacity(value):
+    number = positive(value)
+    if number & (number - 1):
+        raise argparse.ArgumentTypeError("must be a power of two")
+    return number
+
+
+def nonnegative(value):
+    number = int(value)
+    if number < 0:
+        raise argparse.ArgumentTypeError("must be nonnegative")
+    return number
+
+
 def argument_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
@@ -36,6 +50,8 @@ def argument_parser():
     parser.add_argument("--experiment", choices=["overall", "ablation", "vanguard", "threads", "topk"], default="overall")
     parser.add_argument("--output-dir", type=Path, help="new directory; existing results are never overwritten")
     parser.add_argument("--threads", type=positive, help="override worker count except in the threads sweep")
+    parser.add_argument("--queue-capacity", type=ring_capacity, help="mapped host queue records")
+    parser.add_argument("--queue-spill-capacity", type=nonnegative, help="HBM spill records; 0 disables spill storage")
     parser.add_argument("--gpu", default=os.environ.get("CUDA_VISIBLE_DEVICES", "0"))
     parser.add_argument("--numa-interleave", action="store_true", help="prefix each command with numactl --interleave=all")
     parser.add_argument("--recall-mode", choices=["distance-aware", "id"], default="distance-aware")
@@ -76,7 +92,10 @@ def make_jobs(config, args):
                         "--query-chunk", str(settings["query_chunk"]),
                         "--vanguard-size", str(vg),
                         "--cpu-secondary-filter", str(cf).lower(),
-                        "--cross-query-reuse", str(settings["cross_query_reuse"]).lower()]
+                        "--cross-query-reuse", str(settings["cross_query_reuse"]).lower(),
+                        "--queue-capacity", str(args.queue_capacity or settings.get("queue_capacity", 67108864)),
+                        "--queue-spill-capacity", str(args.queue_spill_capacity if args.queue_spill_capacity is not None
+                                                      else settings.get("queue_spill_capacity", 16777216))]
         elif binary.startswith("rabitq_gpu"):
             command += ["--query-chunk", str(settings["gpu_query_chunk"]),
                         "--index-residency", "host-excode", "--fine-kernel", "tiled"]

@@ -1,7 +1,7 @@
 # Standalone tests avoid downloads and keep assert() enabled in Release builds.
-foreach(test experiment_options_test recall_evaluator_test)
+foreach(test experiment_options_test recall_evaluator_test ring_release_tracker_test)
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} PRIVATE coraanns_host)
+    target_link_libraries(${test} PRIVATE coraanns_host Threads::Threads)
     target_compile_options(${test} PRIVATE -UNDEBUG)
     add_test(NAME ${test} COMMAND ${test})
     set_tests_properties(${test} PROPERTIES LABELS cpu ENVIRONMENT "OMP_NUM_THREADS=2")
@@ -12,6 +12,9 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME experiment_runner COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_CURRENT_SOURCE_DIR}/test_experiment_runner.py")
     set_tests_properties(experiment_runner PROPERTIES LABELS cpu TIMEOUT 60)
+    add_test(NAME queue_qps_comparison COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test_compare_queue_qps.py")
+    set_tests_properties(queue_qps_comparison PROPERTIES LABELS cpu TIMEOUT 60)
 endif()
 if(Python3_Interpreter_FOUND AND CORAANNS_BUILD_BASELINES)
     add_test(NAME cpu_pipeline COMMAND "${Python3_EXECUTABLE}"
@@ -23,6 +26,10 @@ if(Python3_Interpreter_FOUND AND CORAANNS_BUILD_BASELINES)
 endif()
 
 if(CORAANNS_BUILD_GPU_TESTS)
+    add_executable(gpu_cpu_ring_queue_test gpu_cpu_ring_queue_test.cpp)
+    target_link_libraries(gpu_cpu_ring_queue_test PRIVATE coraanns)
+    add_test(NAME gpu_cpu_ring_queue_test COMMAND gpu_cpu_ring_queue_test)
+    set_tests_properties(gpu_cpu_ring_queue_test PROPERTIES LABELS gpu TIMEOUT 180)
     add_executable(gpu_cpu_highk_vanguard_test gpu_cpu_highk_vanguard_test.cpp)
     target_link_libraries(gpu_cpu_highk_vanguard_test PRIVATE coraanns_highk)
     add_test(NAME gpu_cpu_highk_vanguard_test COMMAND gpu_cpu_highk_vanguard_test)

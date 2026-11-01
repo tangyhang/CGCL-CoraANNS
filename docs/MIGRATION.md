@@ -39,6 +39,11 @@ Compare against the RaBitQ-Library working tree:
 python3 tools/verify_import.py --source-root /path/to/RaBitQ-Library
 ```
 
-With `--source-root`, the checker also compares the active C++/CUDA token
-sequences of 27 implementation, driver, and shared-header files after applying
-the recorded include mappings and split-file headers.
+The original import hashes remain in the manifest. The ring migration records
+four revised production files separately, including their current hashes and
+the reference ring source hashes. See [RING_QUEUE.md](RING_QUEUE.md).
+
+With `--source-root`, the checker accepts the original source snapshot or the
+recorded ring reference for those four files. It compares active C++/CUDA tokens
+for the other 23 computational files after applying the recorded include
+mappings and split-file headers.

@@ -19,7 +19,9 @@
     "gpu_query_chunk": 1000,
     "vanguard_size": 5,
     "cpu_secondary_filter": true,
-    "cross_query_reuse": true
+    "cross_query_reuse": true,
+    "queue_capacity": 67108864,
+    "queue_spill_capacity": 16777216
   },
   "experiments": {
     "overall": {
@@ -200,9 +202,5 @@
     "vanguard": "CoraANN_vanguard_laion100m.sh",
     "threads": "CoraANN_threads_laion100m.sh",
     "topk": "CoraANN_laion100m_highk_formal.json"
-  },
-  "notes": [
-    "Overall uses the ablation nprobe grid for a consistent fresh comparison; it is not a claim to reproduce every historical spreadsheet row.",
-    "Recall is measured from this run. No historical recall values are substituted."
-  ]
+  }
 }

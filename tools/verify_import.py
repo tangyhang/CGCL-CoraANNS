@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check imported file hashes, optionally against the original working tree."""
+"""Check imported files and recorded revisions against their SHA-256 snapshots."""
 import argparse
 import hashlib
 import json
@@ -20,15 +20,23 @@ def main():
     root = Path(__file__).resolve().parents[1]
     manifest = json.loads((root / "docs/import_manifest.json").read_text())
     errors = []
+    revised = 0
+    compared = 0
     for entry in manifest["files"]:
+        revision = entry.get("revision")
+        revised += bool(revision)
         path = root / entry["destination"]
-        if not path.is_file() or digest(path) != entry["imported_sha256"]:
-            errors.append(f"import differs: {entry['destination']}")
+        expected_hash = revision["sha256"] if revision else entry["imported_sha256"]
+        if not path.is_file() or digest(path) != expected_hash:
+            errors.append(f"snapshot differs: {entry['destination']}")
         if args.source_root:
             path = args.source_root / entry["source"]
-            if not path.is_file() or digest(path) != entry["source_sha256"]:
+            accepted_hashes = {entry["source_sha256"]}
+            if revision:
+                accepted_hashes.add(revision["reference_source_sha256"])
+            if not path.is_file() or digest(path) not in accepted_hashes:
                 errors.append(f"source differs: {entry['source']}")
-            elif entry.get("compare_cpp_tokens"):
+            elif entry.get("compare_cpp_tokens") and not revision:
                 expected = path.read_text()
                 if "source_character_range" in entry:
                     begin, end = entry["source_character_range"]
@@ -38,13 +46,13 @@ def main():
                 expected = entry.get("added_prefix", "") + expected
                 if tokens(expected) != tokens((root / entry["destination"]).read_text()):
                     errors.append(f"C++ tokens differ: {entry['destination']}")
+                compared += 1
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    message = f"Verified {len(manifest['files'])} imported files"
+    message = f"Verified {len(manifest['files']) - revised} unchanged imports and {revised} recorded revisions"
     if args.source_root:
-        compared = sum(bool(entry.get("compare_cpp_tokens")) for entry in manifest["files"])
-        message += f", their original sources, and {compared} unchanged C++/CUDA token sequences"
+        message += f", source snapshots, and {compared} unchanged C++/CUDA token sequences"
     print(message + ".")
     return 0
 

@@ -1,7 +1,7 @@
 {
   "source_repository": "CPU-GPU-IVF-RabitQ (local RaBitQ-Library working tree)",
   "source_head": "14d844154606a901c0c6b58940fcffe2fb32a09f",
-  "note": "Imported working-tree bytes, including any uncommitted changes; HEAD alone does not identify the snapshot. Changes are include paths, one Python import and test path, and the documented production C++ split. Production files have formatting and comment cleanup; all 27 first-party computational C++/CUDA files are audited against the source token sequences, allowing only recorded includes and the split-file prefix.",
+  "note": "The original import snapshot records working-tree bytes, including uncommitted changes. Original hashes and split ranges are preserved. Subsequent production revisions record their own hashes and reference-source hashes; the remaining computational files retain the original token audit.",
   "include_replacements": {
     "rabitqlib/index/ivf_rabitq_querying_gpu_cpu.cuh": "coraanns/search/hybrid.cuh",
     "rabitqlib/index/ivf_rabitq_querying_gpu.cuh": "coraanns/baselines/gpu.cuh",
@@ -2265,7 +2265,12 @@
       "source_sha256": "77f3eb37bcc71f82f785909b3d6ecb22ffd1218151613b046a73ab578f7b9fcb",
       "imported_sha256": "592ccfe181b31eac03960918d14630ee6aae7309286094f93c659fe6735152ea",
       "compare_cpp_tokens": true,
-      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged",
+      "revision": {
+        "change": "CPU\u2013GPU candidate ring; see docs/RING_QUEUE.md",
+        "sha256": "558a722ef1771d64820a2ca3dd2cf9e12df573d5d69c2a4cbbd685313944f984",
+        "reference_source_sha256": "fcd9338cf444c036d73b83021b5d2c9bd31d5e5f916bfa8610e178560799095a"
+      }
     },
     {
       "source": "include/rabitqlib/index/ivf_rabitq_querying_gpu.cuh",
@@ -2398,7 +2403,12 @@
       "source_sha256": "b5c25e8cc56d7f628221d1723066ad578bf9d181d05180c4bdc7c76ec845aa02",
       "imported_sha256": "4f2aaaeaa9b26023ac6223376ee9b422ac4fbe87df25d1caf5d7b3c4d0d762a8",
       "compare_cpp_tokens": true,
-      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged",
+      "revision": {
+        "change": "CPU\u2013GPU candidate ring; see docs/RING_QUEUE.md",
+        "sha256": "3185810e98207b000c241e569d486eeefe8e6796115c5fdbd58e8de6aa19110c",
+        "reference_source_sha256": "59b2918a673006ffdfdb6b822b9a66e89392515f283c60fba7e83fb0f69fc716"
+      }
     },
     {
       "source": "sample/ivf_rabitq_querying_gpu_cpu.cpp",
@@ -2410,7 +2420,12 @@
         28024
       ],
       "compare_cpp_tokens": true,
-      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged",
+      "revision": {
+        "change": "CPU\u2013GPU candidate ring; see docs/RING_QUEUE.md",
+        "sha256": "b13bb77977e45e3a09ae7308e1077c398a3fba89e0d6aef295e01ef25d3aa834",
+        "reference_source_sha256": "4ef8717de652bf8fdce130ac050f291e3ac8e9a864ed2f9b326923485ede597e"
+      }
     },
     {
       "source": "sample/ivf_rabitq_querying_gpu_cpu.cpp",
@@ -2423,7 +2438,12 @@
       ],
       "compare_cpp_tokens": true,
       "added_prefix": "#include <algorithm>\n#include <atomic>\n#include <cfloat>\n#include <cstring>\n#include <cstdlib>\n#include <immintrin.h>\n#include <iostream>\n#include <limits>\n#include <queue>\n#include <threads.h>\n#include <vector>\n#include <omp.h>\n\n#include \"rabitqlib/defines.hpp\"\n#include \"rabitqlib/utils/space.hpp\"\n#include \"rabitqlib/utils/stopw.hpp\"\n#include \"rabitqlib/utils/tools.hpp\"\n#include \"coraanns/search/hybrid.cuh\"\n\n",
-      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged"
+      "formatting": "clang-format; remove disabled-code comments and corrupted comments; C++ token sequence verified unchanged",
+      "revision": {
+        "change": "CPU\u2013GPU candidate ring; see docs/RING_QUEUE.md",
+        "sha256": "73950248ee3293132d54e8681fb4cb2ce2b285eab62f70b0ddc66efe325d80d9",
+        "reference_source_sha256": "4ef8717de652bf8fdce130ac050f291e3ac8e9a864ed2f9b326923485ede597e"
+      }
     },
     {
       "source": "sample/ivf_rabitq_querying_cpu_gpu.cpp",

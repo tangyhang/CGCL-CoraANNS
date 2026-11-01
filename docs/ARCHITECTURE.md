@@ -9,6 +9,7 @@ RaBitQ support code.
 | Shared search state and CPU/GPU interface | `include/coraanns/search/hybrid.cuh` |
 | GPU query preparation, probe selection, pair scheduling, filtering | `src/search/hybrid.cu` |
 | CPU task consumption, secondary filtering, refinement, top-k updates | `src/search/cpu_refinement.cpp` |
+| Candidate ring, contiguous release, GPU watermark cache and refill | `include/coraanns/queue/`, `src/search/ring_queue.cuh` |
 | CPU index construction entry | `apps/build_index.cpp` |
 | GPU index construction | `apps/build_index_gpu.cpp`, `src/index/build_gpu.cu` |
 | IVF serialization, quantization, FastScan, rotations | `third_party/rabitq/include/rabitqlib/` |
@@ -22,10 +23,12 @@ RaBitQ support code.
    RaBitQ's packed codes, factors, and IDs to the GPU/CPU data layout.
 2. The search engine allocates its workspace and prepares queries and probe
    lists. Pair scheduling processes vanguard clusters first.
-3. GPU filtering publishes candidates to the shared task queue. Vanguard
+3. GPU filtering publishes candidates to the mapped host ring, with HBM spill
+   and refill when the ring is full. Vanguard
    processing supplies early thresholds and performs recovery scanning.
 4. CPU workers consume tasks, optionally apply the secondary threshold check,
    refine from extended RaBitQ codes, and update per-query top-k and thresholds.
+   Completed chunks clear their slots and advance the contiguous released prefix.
 5. The driver gathers IDs, applies the recall evaluator outside search
    timing, and prints per-round measurements and the final table.
 

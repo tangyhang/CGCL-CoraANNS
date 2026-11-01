@@ -6,7 +6,8 @@ shared thresholds, CPU secondary filtering, and cross-query reuse.
 
 [中文说明](README.zh-CN.md) · [Build](docs/BUILD.md) ·
 [Reproduce experiments](docs/REPRODUCIBILITY.md) ·
-[Implementation map](docs/ARCHITECTURE.md) · [Source map](docs/MIGRATION.md)
+[Implementation map](docs/ARCHITECTURE.md) · [Candidate ring](docs/RING_QUEUE.md) ·
+[Source map](docs/MIGRATION.md)
 
 ## Layout
 

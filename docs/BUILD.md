@@ -7,11 +7,11 @@ use the build host's instruction set by default. Set
 `-DCORAANNS_NATIVE_ARCH=OFF` when building for another compatible CPU; the
 explicit AVX2/FMA/BMI2 requirement still applies.
 
-The hybrid engine uses a fixed candidate queue with one billion 16-byte
-items, allocated with `cudaHostAllocMapped`: 16 GB (about 14.9 GiB) of pinned
-host memory before index/query workspace. This applies to small GPU examples
-and the vanguard GPU test as well. GPU filtering also requires device memory
-for the one-bit index and workspace.
+The hybrid engine allocates a reusable candidate ring with `cudaHostAllocMapped`.
+The defaults are 67,108,864 host records (1 GiB) and 16,777,216 HBM spill records
+(512 MiB). Set `--queue-capacity` and `--queue-spill-capacity` to change these
+allocations. GPU filtering also requires device memory for the one-bit index
+and query workspace. See [the queue guide](RING_QUEUE.md).
 
 | Dependency | Use | Reference environment |
 | --- | --- | --- |
@@ -92,7 +92,8 @@ directly; the other search targets also link RAFT.
 
 ## Tests
 
-The CPU tests exercise option validation, ID and distance-aware recall
+The CPU tests exercise ring release tracking, performance-log validation,
+option validation, ID and distance-aware recall
 (including duplicates, ties, invalid IDs, L2/IP, and binary formats), and a
 synthetic index round trip. Release tests explicitly retain assertions.
 
@@ -104,7 +105,8 @@ cmake --build build -j2
 ctest --test-dir build -L gpu --output-on-failure
 ```
 
-The GPU tests cover vanguard top-k capacity through 1024, result consistency
+The GPU tests cover ring reuse and HBM refill, vanguard top-k capacity through
+1024, result consistency
 with and without vanguard and query chunking, GPU index residency modes, and
 high-k results against a CPU oracle. They link the production kernels. With
 GPU tests enabled, their high-k libraries are built as dependencies.

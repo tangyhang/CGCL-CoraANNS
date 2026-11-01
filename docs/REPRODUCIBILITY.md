@@ -78,6 +78,11 @@ files and executables, then creates a new results directory. Choose a fresh
 path for `--output-dir`. Failed jobs keep their logs and exit status in the
 results directory.
 
+Use `--queue-capacity` and `--queue-spill-capacity` to select host-ring and HBM
+spill capacities in records. The configuration defaults are 67,108,864 and
+16,777,216 respectively. See [queue validation](RING_QUEUE.md) for paired QPS
+comparisons.
+
 | Sweep | Systems or varied parameter |
 | --- | --- |
 | `overall` | CoraANNS, CPU RaBitQ, and GPU RaBitQ with host extended codes |

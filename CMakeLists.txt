@@ -17,6 +17,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 find_package(OpenMP REQUIRED COMPONENTS CXX)
+find_package(Threads REQUIRED)
 add_library(coraanns_host INTERFACE)
 target_include_directories(coraanns_host INTERFACE "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(coraanns_host SYSTEM INTERFACE
@@ -72,7 +73,7 @@ if(CORAANNS_ENABLE_CUDA)
     function(coraanns_add_search library command)
         add_library(${library} STATIC ${ARGN}
             src/search/hybrid.cu src/search/cpu_refinement.cpp)
-        target_link_libraries(${library} PUBLIC coraanns_cuda)
+        target_link_libraries(${library} PUBLIC coraanns_cuda Threads::Threads atomic)
         add_executable(${command} ${ARGN} apps/search.cpp)
         target_link_libraries(${command} PRIVATE ${library})
     endfunction()
